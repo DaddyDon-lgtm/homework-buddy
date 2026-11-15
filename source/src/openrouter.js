@@ -10,7 +10,8 @@ const TIMEOUT_MS = 150000
 export const OPENROUTER_DEFAULT = 'openrouter/free'
 
 // Free models that can read images, best guesses first.
-const PREFERRED = [/gemma-?[34]/i, /qwen.*vl/i, /mistral-small/i, /llama-4/i, /nemotron.*vl/i]
+// Google's Gemma models are often busy on the shared free pool, so they come after Nemotron.
+const PREFERRED = [/nemotron.*super.*vl/i, /gemma-?[34]/i, /qwen.*vl/i, /nemotron.*vl/i, /mistral-small/i, /llama-4/i]
 
 export async function listFreeVisionModels() {
   const res = await fetch(`${BASE}/models`)
@@ -136,11 +137,13 @@ export async function generateRoundOpenRouter({
   const onText = (t) => onProgress?.({ written: Math.min(count, (t.match(/"prompt_en"/g) || []).length), total: count })
 
   let text = ''
+  let triedRouter = false
+  model = model || OPENROUTER_DEFAULT
   try {
     for (let attempt = 1; ; attempt += 1) {
       try {
         onProgress?.({ written: 0, total: count })
-        text = await streamOnce({ apiKey, model: model || OPENROUTER_DEFAULT, content, signal: timer.signal, onText })
+        text = await streamOnce({ apiKey, model, content, signal: timer.signal, onText })
         break
       } catch (e) {
         if (signal?.aborted) throw new Error('cancelled')
@@ -148,6 +151,12 @@ export async function generateRoundOpenRouter({
         const network = e instanceof TypeError
         if (attempt < 2 && (network || e.status >= 500)) {
           await wait(2000)
+          continue
+        }
+        // The chosen free model is busy: let OpenRouter pick another free one.
+        if (e.status === 429 && model !== OPENROUTER_DEFAULT && !triedRouter) {
+          triedRouter = true
+          model = OPENROUTER_DEFAULT
           continue
         }
         if (network) {

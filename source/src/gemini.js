@@ -85,7 +85,7 @@ Rules:
 - Check every answer, and work out all math carefully before you write the options. Vary which position holds the correct answer.
 - Explanations are short, kind and show the reasoning (1 to 2 sentences in each language).
 - "word" is one useful English word or phrase from the question that is worth learning, with its Chinese meaning.
-- Never use a real person's name in a question; use generic names. Do not use images, tables or anything that needs drawing. Plain text only. Write fractions like 3/4.
+- Never use a real person's name in a question; use generic names. Do not use images, tables or anything that needs drawing. Plain text only. Write fractions like 3/4. Follow Taiwan textbook conventions for math answers: give fractions in simplest form, and write answers greater than 1 as mixed numbers (帶分數), for example 1又1/12 in Chinese and 1 1/12 in English, not 13/12.
 
 Return only JSON in this shape:
 {
