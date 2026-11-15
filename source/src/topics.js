@@ -1,5 +1,7 @@
-// Common Grade 5 topics in Taiwan's 108 curriculum (plus US Grade 5 English).
-// These are curriculum-level topics, not one publisher's exact unit titles.
+// Grade 5 topics. Taiwan subjects follow the 108 curriculum (curriculum-level
+// topics, not one publisher's unit titles). US subjects follow Common Core ELA
+// and the Colorado Academic Standards for Social Studies (2022). For US subjects,
+// "zh" holds the English topic title and "en" the standard it comes from.
 // The student can also type any topic.
 
 export const SUBJECTS = [
@@ -85,6 +87,56 @@ export const SUBJECTS = [
       { zh: '清領時期的臺灣', en: 'Taiwan under Qing rule' },
       { zh: '日治時期的臺灣', en: 'Taiwan under Japanese rule' },
       { zh: '戰後的臺灣', en: 'Taiwan after the war' },
+    ],
+  },
+  {
+    id: 'us-english',
+    zh: '美國英語',
+    en: 'US English',
+    emoji: '📘',
+    us: true,
+    // Common Core State Standards, English Language Arts, Grade 5
+    topics: [
+      { zh: 'Theme of a story', en: 'RL.5.2' },
+      { zh: 'Comparing characters, settings and events', en: 'RL.5.3' },
+      { zh: 'Point of view and the narrator', en: 'RL.5.6' },
+      { zh: 'Making inferences and quoting the text', en: 'RL.5.1 · RI.5.1' },
+      { zh: 'Main ideas and key details', en: 'RI.5.2' },
+      { zh: 'Text structure: cause and effect, compare and contrast, problem and solution', en: 'RI.5.5' },
+      { zh: 'Context clues', en: 'L.5.4a' },
+      { zh: 'Greek and Latin roots and affixes', en: 'L.5.4b' },
+      { zh: 'Similes and metaphors', en: 'L.5.5a' },
+      { zh: 'Idioms, adages and proverbs', en: 'L.5.5b' },
+      { zh: 'Synonyms, antonyms and homographs', en: 'L.5.5c' },
+      { zh: 'Conjunctions, prepositions and interjections', en: 'L.5.1a' },
+      { zh: 'Perfect verb tenses', en: 'L.5.1b' },
+      { zh: 'Fixing shifts in verb tense', en: 'L.5.1d' },
+      { zh: 'Correlative conjunctions (either/or, neither/nor)', en: 'L.5.1e' },
+      { zh: 'Using commas correctly', en: 'L.5.2' },
+    ],
+  },
+  {
+    id: 'us-social',
+    zh: '美國社會',
+    en: 'US Social Studies',
+    emoji: '🗽',
+    us: true,
+    // Colorado Academic Standards, Social Studies (2022), Grade 5
+    topics: [
+      { zh: 'American Indian nations before European contact', en: 'History' },
+      { zh: 'European exploration and colonization', en: 'History' },
+      { zh: 'The Thirteen Colonies', en: 'History' },
+      { zh: 'Causes of the American Revolution', en: 'History' },
+      { zh: 'The Declaration of Independence', en: 'History · Civics' },
+      { zh: 'The Revolutionary War', en: 'History' },
+      { zh: 'From the Articles of Confederation to the Constitution', en: 'History · Civics' },
+      { zh: 'The Bill of Rights', en: 'Civics' },
+      { zh: 'The three branches of government', en: 'Civics' },
+      { zh: 'Rights and responsibilities of citizens', en: 'Civics' },
+      { zh: 'US regions, landforms and map skills', en: 'Geography' },
+      { zh: 'Why people moved: push and pull factors', en: 'Geography' },
+      { zh: 'Trade, incentives and economic choices', en: 'Economics' },
+      { zh: 'Saving, investing and banks', en: 'Personal financial literacy' },
     ],
   },
 ]

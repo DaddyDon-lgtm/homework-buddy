@@ -18,10 +18,11 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
   const total = round.questions.length
   const subject = subjectById(round.subject)
   const isEnglish = q.kind === 'english'
+  const usRound = subject.us === true
   const answered = chosen !== null
 
   // Which language leads. English challenge questions always lead with English.
-  const enFirst = isEnglish || langMode !== 'zh-first'
+  const enFirst = isEnglish || usRound || langMode !== 'zh-first'
   const both = !isEnglish && langMode === 'both'
   const primary = (o) => (enFirst ? o.en || o.zh : o.zh || o.en)
   const secondary = (o) => (enFirst ? o.zh : o.en)
@@ -69,7 +70,7 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
             if (answers.length === 0 || window.confirm('Leave this round? Your stars for it will not be saved.')) onQuit()
           }}
         >
-          ✕ 離開 Quit
+          ✕ {usRound ? 'Quit' : '離開 Quit'}
         </button>
         <span className="muted">
           {subject.emoji} {round.topic_zh} · {round.topic_en}
@@ -89,6 +90,7 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
 
       <div className="question">
         {isEnglish && <span className="badge">🇺🇸 English Challenge</span>}
+        {usRound && <span className="badge">🇺🇸 US Grade 5</span>}
         <p className="prompt">{promptPrimary}</p>
         {revealed && promptSecondary && <p className="prompt-other">{promptSecondary}</p>}
         {!revealed && promptSecondary && (
@@ -121,10 +123,17 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
         <div className={`feedback ${correct ? 'feedback-good' : 'feedback-bad'}`}>
           <Mascot mood={correct ? 'cheer' : 'oops'} size={92} className="feedback-mascot" />
           <div className="feedback-body">
-            <h2>{correct ? '答對了！Correct! ⭐' : '再想想 Not quite'}</h2>
+            <h2>{correct ? (usRound ? 'Correct! ⭐' : '答對了！Correct! ⭐') : usRound ? 'Not quite' : '再想想 Not quite'}</h2>
             {mascotName && (
               <p className="mascot-says">
-                {mascotName}：{correct ? '汪！好厲害！ Woof, amazing!' : '沒關係，一起看看為什麼。 It’s OK, let’s see why.'}
+                {mascotName}:{' '}
+                {correct
+                  ? usRound
+                    ? 'Woof, amazing!'
+                    : '汪！好厲害！ Woof, amazing!'
+                  : usRound
+                    ? 'It’s OK, let’s see why.'
+                    : '沒關係，一起看看為什麼。 It’s OK, let’s see why.'}
               </p>
             )}
             {q.explain_en && <p>{q.explain_en}</p>}
@@ -135,7 +144,7 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
               </p>
             )}
             <button className="btn" onClick={next}>
-              {index + 1 >= total ? '看結果 See my results' : '下一題 Next'} →
+              {index + 1 >= total ? (usRound ? 'See my results' : '看結果 See my results') : usRound ? 'Next' : '下一題 Next'} →
             </button>
           </div>
         </div>

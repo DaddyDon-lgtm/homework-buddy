@@ -3,7 +3,12 @@
 
 const BASE = 'https://generativelanguage.googleapis.com/v1beta'
 
-const SUBJECT_IDS = ['math', 'mandarin', 'english', 'science', 'social', 'other']
+const SUBJECT_IDS = ['math', 'mandarin', 'english', 'science', 'social', 'us-english', 'us-social', 'other']
+
+const US_SUBJECTS = {
+  'us-english': 'US Grade 5 English Language Arts, following the Common Core State Standards',
+  'us-social': 'US Grade 5 Social Studies, following the Colorado Academic Standards for Social Studies (2022)',
+}
 
 export const MAX_PAGES = 5
 export const FALLBACK_MODEL = 'gemini-3.5-flash-lite'
@@ -63,6 +68,7 @@ function thinkingFor(model) {
 }
 
 export function buildPrompt({ pages, subject, topicZh, topicEn, count }) {
+  if (!pages && US_SUBJECTS[subject]) return buildUsPrompt({ subject, topic: topicZh || topicEn, standard: topicEn, count })
   const english = Math.max(2, Math.round(count / 4))
   const topical = count - english
   let source
@@ -115,6 +121,52 @@ Return only JSON in this shape:
 }`
 }
 
+function buildUsPrompt({ subject, topic, standard, count }) {
+  const isSocial = subject === 'us-social'
+  return `You write practice questions for a student working at US Grade 5 level in ${US_SUBJECTS[subject]}.
+
+Topic: ${topic}${standard && standard !== topic ? ` (${standard})` : ''}
+
+Write exactly ${count} multiple-choice questions on this topic, at a real US Grade 5 level (not easier). Start easier and get harder. Mix question types: ${
+    isSocial
+      ? 'key facts and vocabulary, cause and effect, putting events in order, reading a short 3 to 5 sentence passage or primary-source quote and answering a question about it, and comparing perspectives'
+      : 'short 3 to 6 sentence passages (stories or nonfiction) with a question about them, sentences to complete or correct, and word-meaning questions'
+  }.
+
+Rules:
+- ENGLISH ONLY. Write no Chinese anywhere: set every "prompt_zh", "explain_zh" and option "zh" to "".
+- Use "kind": "topic" for every question.
+- Every question has exactly 4 options and exactly one correct answer. Wrong options should come from mistakes a student would really make.
+- Use "work" to check the correct answer briefly BEFORE writing the options, then make sure the option marked by "answer" matches it.
+- Explanations are short and kind and say why the answer is right (1 to 2 sentences).
+- "word" is one useful word or phrase from the question: put the word in "en" and a short, simple English definition in "zh".${
+    isSocial
+      ? '\n- Be historically accurate and fair. Include the perspectives of American Indian nations, enslaved people and others where they matter, in language suitable for a 10-year-old.'
+      : ''
+  }
+- Never use a real living person's name except historical figures in social studies; use generic names. No images or tables. Plain text only.
+
+Return only JSON in this shape:
+{
+  "subject": "${subject}",
+  "topic_zh": "short topic name in English",
+  "topic_en": "${standard || 'short label'}",
+  "questions": [
+    {
+      "kind": "topic",
+      "prompt_zh": "",
+      "prompt_en": "...",
+      "work": "one or two short lines working out the correct answer before you write the options",
+      "options": [{"zh": "", "en": "..."}, {"zh": "", "en": "..."}, {"zh": "", "en": "..."}, {"zh": "", "en": "..."}],
+      "answer": 0,
+      "explain_zh": "",
+      "explain_en": "...",
+      "word": {"en": "...", "zh": "short English definition"}
+    }
+  ]
+}`
+}
+
 function shuffle(list) {
   const a = [...list]
   for (let i = a.length - 1; i > 0; i -= 1) {
@@ -160,7 +212,7 @@ export function cleanRound(raw, fallback = {}) {
     })
   if (questions.length < 3) throw new Error('The AI did not return enough questions. Please try again.')
   return {
-    subject: SUBJECT_IDS.includes(raw.subject) ? raw.subject : fallback.subject || 'other',
+    subject: fallback.subject || (SUBJECT_IDS.includes(raw.subject) ? raw.subject : 'other'),
     topic_zh: String(raw.topic_zh || fallback.topicZh || ''),
     topic_en: String(raw.topic_en || fallback.topicEn || ''),
     questions,
