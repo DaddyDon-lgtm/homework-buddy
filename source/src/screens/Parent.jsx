@@ -313,6 +313,16 @@ function Settings() {
         <small>Stored only on this device. It is never sent anywhere.</small>
       </label>
 
+      <label>
+        Mascot's name
+        <input
+          value={settings.mascotName}
+          onChange={(e) => updateSettings({ mascotName: e.target.value })}
+          maxLength={20}
+          placeholder="Leave empty for no name"
+        />
+      </label>
+
       <h2 className="form-heading">Main AI: Gemini</h2>
       <label>
         Gemini API key

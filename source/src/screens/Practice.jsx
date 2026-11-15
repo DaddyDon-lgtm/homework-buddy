@@ -1,9 +1,14 @@
 import { useState } from 'react'
 import { subjectById } from '../topics.js'
+import Mascot from '../Mascot.jsx'
+import Celebrate from '../Celebrate.jsx'
 
 const LETTERS = ['A', 'B', 'C', 'D']
 
+import { useStore } from '../store.jsx'
+
 export default function Practice({ round, langMode, onQuit, onFinish }) {
+  const mascotName = useStore().state.settings.mascotName
   const [index, setIndex] = useState(0)
   const [chosen, setChosen] = useState(null)
   const [showOther, setShowOther] = useState(false)
@@ -111,19 +116,28 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
         })}
       </div>
 
+      {answered && correct && <Celebrate key={index} />}
       {answered && (
         <div className={`feedback ${correct ? 'feedback-good' : 'feedback-bad'}`}>
-          <h2>{correct ? '答對了！Correct! ⭐' : '再想想 Not quite'}</h2>
-          {q.explain_en && <p>{q.explain_en}</p>}
-          {q.explain_zh && <p className="muted">{q.explain_zh}</p>}
-          {q.word && (
-            <p className="word">
-              📚 <strong>{q.word.en}</strong> {q.word.zh && <span>= {q.word.zh}</span>}
-            </p>
-          )}
-          <button className="btn" onClick={next}>
-            {index + 1 >= total ? '看結果 See my results' : '下一題 Next'} →
-          </button>
+          <Mascot mood={correct ? 'cheer' : 'oops'} size={92} className="feedback-mascot" />
+          <div className="feedback-body">
+            <h2>{correct ? '答對了！Correct! ⭐' : '再想想 Not quite'}</h2>
+            {mascotName && (
+              <p className="mascot-says">
+                {mascotName}：{correct ? '汪！好厲害！ Woof, amazing!' : '沒關係，一起看看為什麼。 It’s OK, let’s see why.'}
+              </p>
+            )}
+            {q.explain_en && <p>{q.explain_en}</p>}
+            {q.explain_zh && <p className="muted">{q.explain_zh}</p>}
+            {q.word && (
+              <p className="word">
+                📚 <strong>{q.word.en}</strong> {q.word.zh && <span>= {q.word.zh}</span>}
+              </p>
+            )}
+            <button className="btn" onClick={next}>
+              {index + 1 >= total ? '看結果 See my results' : '下一題 Next'} →
+            </button>
+          </div>
         </div>
       )}
     </div>

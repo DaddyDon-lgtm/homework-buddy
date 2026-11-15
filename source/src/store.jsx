@@ -12,7 +12,9 @@ const defaults = {
     openrouterKey: '',
     openrouterModel: 'openrouter/free',
     numQuestions: 8,
-    langMode: 'en-first', // 'en-first' | 'zh-first' | 'both'
+    langMode: 'en-first',
+    theme: 'idol',
+    mascotName: 'Mia', // 'en-first' | 'zh-first' | 'both'
     pin: '',
   },
   sessions: [],

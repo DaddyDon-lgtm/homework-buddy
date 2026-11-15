@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { applyTheme } from './themes.js'
 import { useStore, dayKey, starsFor } from './store.jsx'
 import { generateWithFallback } from './ai.js'
 import Home from './screens/Home.jsx'
@@ -20,6 +21,8 @@ export default function App() {
   const [service, setService] = useState('gemini')
   const lastRequest = useRef(null)
   const controller = useRef(null)
+
+  useEffect(() => applyTheme(settings.theme), [settings.theme])
 
   const goHome = () => {
     setError('')

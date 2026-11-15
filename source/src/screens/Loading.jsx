@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react'
+import Mascot from '../Mascot.jsx'
+
+import { useStore } from '../store.jsx'
 
 export default function Loading({ pages, progress, backup, onCancel }) {
+  const name = useStore().state.settings.mascotName
   const [seconds, setSeconds] = useState(0)
   useEffect(() => {
     const t = setInterval(() => setSeconds((n) => n + 1), 1000)
@@ -23,7 +27,8 @@ export default function Loading({ pages, progress, backup, onCancel }) {
 
   return (
     <div className="page center">
-      <div className="spinner">⭐</div>
+      <Mascot mood="think" size={150} className="bob" />
+      {name && <p className="eyebrow">{name} 努力中… {name} is on it!</p>}
       <h1>{line.zh}</h1>
       <p className="lead">{line.en}</p>
       {total > 0 && (

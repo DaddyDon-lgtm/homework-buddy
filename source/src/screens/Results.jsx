@@ -1,4 +1,6 @@
 import { useStore } from '../store.jsx'
+import Mascot from '../Mascot.jsx'
+import Celebrate from '../Celebrate.jsx'
 
 export default function Results({ session, onHome }) {
   const { totalStars, streak } = useStore()
@@ -12,8 +14,12 @@ export default function Results({ session, onHome }) {
 
   return (
     <div className="page center">
-      <div className="burst">{perfect ? '🏆' : '🎉'}</div>
-      <h1>{headline.zh}</h1>
+      {ratio >= 0.7 && <Celebrate />}
+      <Mascot mood={ratio >= 0.5 ? 'cheer' : 'happy'} size={170} className="bob" />
+      <h1 className="title-glow">
+        {perfect && '🏆 '}
+        {headline.zh}
+      </h1>
       <p className="lead">{headline.en}</p>
 
       <section className="stats">
