@@ -766,3 +766,54 @@ tr:last-child td {
     transition: none !important;
   }
 }
+
+/* Multi-page photos */
+.pages {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
+}
+
+.page-thumb {
+  position: relative;
+  margin: 0;
+  background: var(--card);
+  border: 2px solid var(--line);
+  border-radius: 18px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.page-thumb img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 12px;
+  display: block;
+}
+
+.page-thumb figcaption {
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.remove {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: 0;
+  background: var(--coral);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 0 3px 0 var(--coral-deep);
+}
+
+.loading-progress {
+  width: min(420px, 90%);
+}

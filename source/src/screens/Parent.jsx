@@ -325,7 +325,7 @@ function Settings() {
             </option>
           ))}
         </select>
-        <small>A "Flash" model is fast, reads photos well and is on the free tier.</small>
+        <small>A "Flash" model reads photos well and is on the free tier. If rounds are slow or time out, try a "Flash-Lite" model.</small>
       </label>
 
       <label>

@@ -16,14 +16,16 @@ export default function App() {
   const [round, setRound] = useState(null)
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
+  const [progress, setProgress] = useState(null)
   const lastRequest = useRef(null)
+  const controller = useRef(null)
 
   const goHome = () => {
     setError('')
     setScreen('home')
   }
 
-  // request: { source: 'photo' | 'topic', image?, subject?, topicZh?, topicEn? }
+  // request: { source: 'photo' | 'topic', images?, subject?, topicZh?, topicEn? }
   async function startRound(request) {
     lastRequest.current = request
     setError('')
@@ -32,20 +34,35 @@ export default function App() {
       setScreen('home')
       return
     }
+    const ctl = new AbortController()
+    controller.current = ctl
+    setProgress(null)
     setScreen('loading')
     try {
       const made = await generateRound({
         apiKey: settings.apiKey,
         model: settings.model,
         count: settings.numQuestions,
+        signal: ctl.signal,
+        onProgress: setProgress,
         ...request,
       })
+      if (ctl.signal.aborted) return
       setRound({ ...made, source: request.source, startedAt: Date.now() })
       setScreen('practice')
     } catch (e) {
+      if (ctl.signal.aborted) return
       setError(e.message || 'Something went wrong. Please try again.')
       setScreen('home')
+    } finally {
+      if (controller.current === ctl) controller.current = null
     }
+  }
+
+  function cancelRound() {
+    controller.current?.abort()
+    controller.current = null
+    goHome()
   }
 
   function startSample(sample) {
@@ -87,7 +104,13 @@ export default function App() {
     case 'topics':
       return <Topics onBack={goHome} onStart={startRound} />
     case 'loading':
-      return <Loading fromPhoto={lastRequest.current?.source === 'photo'} />
+      return (
+        <Loading
+          pages={lastRequest.current?.images?.length || 0}
+          progress={progress}
+          onCancel={cancelRound}
+        />
+      )
     case 'practice':
       return <Practice round={round} langMode={settings.langMode} onQuit={goHome} onFinish={finishRound} />
     case 'results':
