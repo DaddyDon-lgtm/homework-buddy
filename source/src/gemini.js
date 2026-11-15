@@ -3,11 +3,12 @@
 
 const BASE = 'https://generativelanguage.googleapis.com/v1beta'
 
-const SUBJECT_IDS = ['math', 'mandarin', 'english', 'science', 'social', 'us-english', 'us-social', 'other']
+const SUBJECT_IDS = ['math', 'mandarin', 'english', 'science', 'social', 'us-english', 'us-social', 'us-geo', 'other']
 
 const US_SUBJECTS = {
   'us-english': 'US Grade 5 English Language Arts, following the Common Core State Standards',
   'us-social': 'US Grade 5 Social Studies, following the Colorado Academic Standards for Social Studies (2022)',
+  'us-geo': 'US Grade 5 geography of the United States, following the geography standard of the Colorado Academic Standards for Social Studies (2022)',
 }
 
 export const MAX_PAGES = 5
@@ -123,12 +124,15 @@ Return only JSON in this shape:
 
 function buildUsPrompt({ subject, topic, standard, count }) {
   const isSocial = subject === 'us-social'
+  const isGeo = subject === 'us-geo'
   return `You write practice questions for a student working at US Grade 5 level in ${US_SUBJECTS[subject]}.
 
 Topic: ${topic}${standard && standard !== topic ? ` (${standard})` : ''}
 
 Write exactly ${count} multiple-choice questions on this topic, at a real US Grade 5 level (not easier). Start easier and get harder. Mix question types: ${
-    isSocial
+    isGeo
+      ? 'locating places from clues written in words (for example "the state directly north of Texas"), matching places to their region, landforms and bodies of water, using directions, scale, latitude and longitude described in words, and how geography affects how people live and move. There are no maps or pictures, so describe any map situation clearly in words'
+      : isSocial
       ? 'key facts and vocabulary, cause and effect, putting events in order, reading a short 3 to 5 sentence passage or primary-source quote and answering a question about it, and comparing perspectives'
       : 'short 3 to 6 sentence passages (stories or nonfiction) with a question about them, sentences to complete or correct, and word-meaning questions'
   }.
@@ -136,11 +140,14 @@ Write exactly ${count} multiple-choice questions on this topic, at a real US Gra
 Rules:
 - ENGLISH ONLY. Write no Chinese anywhere: set every "prompt_zh", "explain_zh" and option "zh" to "".
 - Use "kind": "topic" for every question.
+- Every question must practice the topic above directly. Do not drift into other topics.
 - Every question has exactly 4 options and exactly one correct answer. Wrong options should come from mistakes a student would really make.
-- Use "work" to check the correct answer briefly BEFORE writing the options, then make sure the option marked by "answer" matches it.
+- Use "work" to check the correct answer briefly BEFORE writing the options, then check each wrong option and make sure it is clearly wrong. Never offer two options that could both be defended as correct.
 - Explanations are short and kind and say why the answer is right (1 to 2 sentences).
 - "word" is one useful word or phrase from the question: put the word in "en" and a short, simple English definition in "zh".${
-    isSocial
+    isGeo
+      ? '\n- Be geographically accurate: double-check every state, capital, river, mountain range and direction in "work" before writing the options.\n- Only ask for a direction between two places when it is clear-cut (for example due north, or clearly northeast); avoid places that are almost due east or west of each other.\n- Avoid rivers, borders or regions that belong to more than one answer choice (for example a river that borders several states).'
+      : isSocial
       ? '\n- Be historically accurate and fair. Include the perspectives of American Indian nations, enslaved people and others where they matter, in language suitable for a 10-year-old.'
       : ''
   }
