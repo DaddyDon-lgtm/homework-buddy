@@ -33,7 +33,8 @@ async function readError(res) {
   else if (res.status === 403) friendly = 'The AI key was refused. Check it in the parent area.'
   else if (res.status === 404) friendly = 'That AI model was not found. Pick another one in the parent area.'
   else if (res.status === 429)
-    friendly = 'The AI is busy or the free daily limit was reached. Try again in a minute.'
+    friendly =
+      'The AI usage limit was reached. Wait a minute and try again. If it keeps happening, pick a "Flash-Lite" model in the parent Settings (Pro models are not free).'
   else if (res.status >= 500) friendly = 'The AI service is having trouble right now. Please try again.'
   else friendly = `The AI service returned an error (${res.status}).`
   if (detail && res.status !== 400) friendly += ` [${res.status}: ${detail.slice(0, 160)}]`
@@ -262,9 +263,10 @@ export async function generateRound({
           continue
         }
         const network = e instanceof TypeError
-        const temporary = network || e.status >= 500 || e.status === 429
+        // A 429 (usage limit) is not retried: retrying only uses up the limit faster.
+        const temporary = network || e.status >= 500
         if (attempt < 2 && temporary) {
-          await wait(e.status === 429 ? 5000 : 2000)
+          await wait(2000)
           continue
         }
         if (network) {
