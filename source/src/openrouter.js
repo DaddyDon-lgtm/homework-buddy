@@ -54,7 +54,7 @@ async function readError(res) {
   return err
 }
 
-async function streamOnce({ apiKey, model, content, signal, onText }) {
+async function streamOnce({ apiKey, model, content, noThinking, signal, onText }) {
   const res = await fetch(`${BASE}/chat/completions`, {
     method: 'POST',
     headers: {
@@ -67,6 +67,9 @@ async function streamOnce({ apiKey, model, content, signal, onText }) {
       stream: true,
       temperature: 0.7,
       messages: [{ role: 'user', content }],
+      // Free models often "think" silently for close to a minute first.
+      // Tested: with thinking off, rounds take about 12 seconds and stay accurate.
+      ...(noThinking ? { reasoning: { enabled: false } } : {}),
     }),
     signal,
   })
@@ -138,16 +141,22 @@ export async function generateRoundOpenRouter({
 
   let text = ''
   let triedRouter = false
+  let noThinking = true
   model = model || OPENROUTER_DEFAULT
   try {
     for (let attempt = 1; ; attempt += 1) {
       try {
         onProgress?.({ written: 0, total: count })
-        text = await streamOnce({ apiKey, model, content, signal: timer.signal, onText })
+        text = await streamOnce({ apiKey, model, content, noThinking, signal: timer.signal, onText })
         break
       } catch (e) {
         if (signal?.aborted) throw new Error('cancelled')
         if (timer.signal.aborted) throw serviceError('The free backup AI took too long. Please try again.')
+        // A model that rejects the thinking switch: ask again without it.
+        if (e.status === 400 && noThinking && /reason|think/i.test(e.message)) {
+          noThinking = false
+          continue
+        }
         const network = e instanceof TypeError
         if (attempt < 2 && (network || e.status >= 500)) {
           await wait(2000)
