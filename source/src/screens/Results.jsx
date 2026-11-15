@@ -2,7 +2,7 @@ import { useStore } from '../store.jsx'
 import Mascot from '../Mascot.jsx'
 import Celebrate from '../Celebrate.jsx'
 
-export default function Results({ session, onHome }) {
+export default function Results({ session, onHome, tickets, onBeat }) {
   const { totalStars, streak } = useStore()
   const perfect = session.correct === session.total
   const ratio = session.total ? session.correct / session.total : 0
@@ -81,6 +81,16 @@ export default function Results({ session, onHome }) {
         </section>
       )}
 
+      {tickets > 0 && (
+        <button className="game-card" onClick={onBeat}>
+          <span className="game-icon">🎵</span>
+          <div>
+            <strong>Beat Battle unlocked!</strong>
+            <span>用剛剛的題目來打節拍 Play with the questions you just practiced</span>
+          </div>
+          <span className="tickets">🎟️ × {tickets}</span>
+        </button>
+      )}
       <button className="btn" onClick={onHome}>
         🏠 回首頁 Home
       </button>

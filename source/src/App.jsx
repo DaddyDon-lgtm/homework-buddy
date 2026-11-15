@@ -9,6 +9,8 @@ import Loading from './screens/Loading.jsx'
 import Practice from './screens/Practice.jsx'
 import Results from './screens/Results.jsx'
 import Parent from './screens/Parent.jsx'
+import BeatBattle from './screens/BeatBattle.jsx'
+import { buildBeatPool } from './beat/pool.js'
 
 export default function App() {
   const store = useStore()
@@ -19,6 +21,7 @@ export default function App() {
   const [error, setError] = useState('')
   const [progress, setProgress] = useState(null)
   const [service, setService] = useState('gemini')
+  const [beatQuestions, setBeatQuestions] = useState(null)
   const lastRequest = useRef(null)
   const controller = useRef(null)
 
@@ -63,6 +66,26 @@ export default function App() {
     } finally {
       if (controller.current === ctl) controller.current = null
     }
+  }
+
+  // Opens Beat Battle with one ticket. justFinished: use that round's questions first.
+  function openBeat(justFinished) {
+    const { state } = store
+    if ((state.tickets || 0) < 1) return
+    const questions = buildBeatPool({
+      round: justFinished ? round : null,
+      sessions: state.sessions,
+      vocab: state.vocab,
+      langMode: settings.langMode,
+    })
+    if (questions.length < 4) {
+      setError('Beat Battle needs a few more practice questions first. Finish another round!')
+      setScreen('home')
+      return
+    }
+    store.useTicket()
+    setBeatQuestions(questions)
+    setScreen('beat')
   }
 
   function cancelRound() {
@@ -138,7 +161,19 @@ export default function App() {
     case 'practice':
       return <Practice round={round} langMode={settings.langMode} onQuit={goHome} onFinish={finishRound} />
     case 'results':
-      return <Results session={result} onHome={goHome} />
+      return <Results session={result} onHome={goHome} tickets={store.state.tickets} onBeat={() => openBeat(true)} />
+    case 'beat':
+      return (
+        <BeatBattle
+          questions={beatQuestions}
+          best={store.state.beat?.best || 0}
+          muted={store.state.beat?.muted}
+          mascotName={settings.mascotName}
+          onMuteChange={store.setBeatMuted}
+          onFinish={store.saveBeat}
+          onExit={goHome}
+        />
+      )
     case 'parent':
       return <Parent onBack={goHome} />
     default:
@@ -150,6 +185,7 @@ export default function App() {
           onPhoto={() => setScreen('photo')}
           onTopics={() => setScreen('topics')}
           onSample={startSample}
+          onBeat={() => openBeat(false)}
           onParent={() => setScreen('parent')}
         />
       )

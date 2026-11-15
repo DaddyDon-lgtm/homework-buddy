@@ -11,7 +11,7 @@ function greeting() {
   return { en: 'Good evening', zh: '晚安' }
 }
 
-export default function Home({ error, onClearError, onRetry, onPhoto, onTopics, onSample, onParent }) {
+export default function Home({ error, onClearError, onRetry, onPhoto, onTopics, onSample, onParent, onBeat }) {
   const { state, totalStars, streak, updateSettings } = useStore()
   const { settings, sessions } = state
   const hello = greeting()
@@ -104,6 +104,19 @@ export default function Home({ error, onClearError, onRetry, onPhoto, onTopics, 
           <span className="big-sub">Pick a topic</span>
         </button>
       </section>
+
+      <button className="game-card" onClick={onBeat} disabled={!state.tickets}>
+        <span className="game-icon">🎵</span>
+        <div>
+          <strong>Beat Battle</strong>
+          <span>
+            {state.tickets
+              ? '答對又跟上節拍！ Hit the right answer on the beat!'
+              : '完成一回練習就能玩 Finish a practice round to unlock'}
+          </span>
+        </div>
+        <span className="tickets">{state.tickets ? `🎟️ × ${state.tickets}` : '🔒'}</span>
+      </button>
 
       <section>
         <h2>{hasKey ? '暖身題 Warm-up rounds' : '試玩 Sample rounds'}</h2>

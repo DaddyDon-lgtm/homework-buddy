@@ -19,7 +19,11 @@ const defaults = {
   },
   sessions: [],
   vocab: [],
+  tickets: 0,
+  beat: { best: 0, plays: 0, muted: false },
 }
+
+export const MAX_TICKETS = 3
 
 function load() {
   try {
@@ -32,6 +36,7 @@ function load() {
       ...defaults,
       ...saved,
       settings: { ...defaults.settings, ...(saved.settings || {}) },
+      beat: { ...defaults.beat, ...(saved.beat || {}) },
     }
   } catch {
     return defaults
@@ -97,6 +102,7 @@ export function StoreProvider({ children }) {
           return {
             ...s,
             sessions: [...s.sessions, session],
+            tickets: Math.min(MAX_TICKETS, (s.tickets || 0) + 1),
             vocab: [...s.vocab, ...fresh.map((w) => ({ ...w, day: session.day }))],
           }
         })
@@ -120,6 +126,18 @@ export function StoreProvider({ children }) {
             }
           }),
         }))
+      },
+      useTicket() {
+        setState((s) => ({ ...s, tickets: Math.max(0, (s.tickets || 0) - 1) }))
+      },
+      saveBeat(result) {
+        setState((s) => ({
+          ...s,
+          beat: { ...s.beat, best: Math.max(s.beat?.best || 0, result.score), plays: (s.beat?.plays || 0) + 1 },
+        }))
+      },
+      setBeatMuted(muted) {
+        setState((s) => ({ ...s, beat: { ...s.beat, muted } }))
       },
       resetProgress() {
         setState((s) => ({ ...s, sessions: [], vocab: [] }))
