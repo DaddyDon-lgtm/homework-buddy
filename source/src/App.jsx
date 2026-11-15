@@ -98,6 +98,23 @@ export default function App() {
       missed: answers
         .filter((a) => !a.correct)
         .map((a) => ({ promptEn: a.promptEn, promptZh: a.promptZh, rightAnswer: a.rightAnswer, chosen: a.chosen })),
+      flaggedCount: answers.filter((a) => a.flagged).length,
+      // Every question, for the parent review list.
+      items: answers.map((a) => ({
+        kind: a.kind,
+        promptEn: a.promptEn,
+        promptZh: a.promptZh,
+        options: a.options,
+        answerIndex: a.answerIndex,
+        chosenIndex: a.chosenIndex,
+        rightAnswer: a.rightAnswer,
+        chosen: a.chosen,
+        explainEn: a.explainEn,
+        correct: a.correct,
+        flagged: a.flagged,
+        keyWrong: false,
+        reviewed: false,
+      })),
     }
     store.addSession(session)
     setResult(session)

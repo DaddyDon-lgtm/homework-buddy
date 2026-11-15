@@ -48,6 +48,12 @@ export default function Results({ session, onHome }) {
         </div>
       </section>
 
+      {session.flaggedCount > 0 && (
+        <p className="flag-done">
+          🚩 妳標記了 {session.flaggedCount} 題給爸媽檢查。 You flagged {session.flaggedCount} question for a parent to check.
+        </p>
+      )}
+
       {session.words.length > 0 && (
         <section className="left">
           <h2>今天的英文單字 Words from this round</h2>

@@ -1482,3 +1482,103 @@ tr:last-child td {
 [data-theme='kawaii'] .bubble-name {
   color: var(--a1-deep);
 }
+
+/* ---------- flagging and parent review ---------- */
+
+.flag-row {
+  margin-top: 6px;
+}
+
+.flag-link {
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  padding: 4px 0;
+}
+
+.flag-done {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--a1);
+}
+
+.review h2 .count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  margin-left: 6px;
+  border-radius: 999px;
+  background: var(--a1);
+  color: var(--a1-text);
+  font-size: 0.95rem;
+}
+
+.review-list {
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review-item {
+  background: var(--surface);
+  border: var(--bw) solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.review-item.is-flagged {
+  border-color: var(--a1);
+}
+
+.review-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+.flag-chip {
+  background: var(--a1);
+  color: var(--a1-text);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.review-q {
+  margin: 0;
+  font-weight: 800;
+}
+
+.review-q2,
+.review-why {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.review-options {
+  margin: 0;
+  padding-left: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.review-options .opt-key {
+  color: var(--good);
+  font-weight: 700;
+}
+
+.review-options .opt-chosen:not(.opt-key) {
+  color: var(--bad);
+  font-weight: 700;
+}

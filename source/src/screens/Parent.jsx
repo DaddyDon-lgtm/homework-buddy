@@ -54,6 +54,93 @@ function PinGate({ pin, onSetPin, onUnlock, onBack }) {
   )
 }
 
+function ReviewList() {
+  const { state, reviewItem } = useStore()
+  const [showDone, setShowDone] = useState(false)
+
+  // Newest first. Flagged questions come before simply-missed ones.
+  const all = []
+  ;[...state.sessions].reverse().forEach((sess) => {
+    ;(sess.items || []).forEach((it, i) => {
+      if (it.flagged || !it.correct) all.push({ sess, it, i })
+    })
+  })
+  const open = all.filter((x) => !x.it.reviewed).sort((a, b) => Number(b.it.flagged) - Number(a.it.flagged))
+  const done = all.filter((x) => x.it.reviewed)
+  const fixed = done.filter((x) => x.it.keyWrong).length
+  const list = showDone ? done : open
+
+  return (
+    <section className="review">
+      <h2>
+        To review {open.length > 0 && <span className="count">{open.length}</span>}
+      </h2>
+      <p className="muted form-note">
+        Questions she flagged 🚩 or got wrong. If the app&apos;s answer key was wrong, mark it and she gets the star back.
+        {fixed > 0 && ` ${fixed} answer key${fixed === 1 ? '' : 's'} fixed so far.`}
+      </p>
+      {list.length === 0 && <p className="muted">{showDone ? 'Nothing reviewed yet.' : 'All caught up. ✓'}</p>}
+      <ul className="review-list">
+        {list.slice(0, 30).map(({ sess, it, i }) => {
+          const subject = subjectById(sess.subject)
+          return (
+            <li key={`${sess.id}-${i}`} className={`review-item ${it.flagged ? 'is-flagged' : ''}`}>
+              <div className="review-meta">
+                {it.flagged && <span className="flag-chip">🚩 She flagged this</span>}
+                <span className="muted">
+                  {subject.emoji} {sess.topicEn || sess.topicZh} · {new Date(sess.at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                </span>
+              </div>
+              <p className="review-q">{it.promptEn || it.promptZh}</p>
+              {it.promptZh && it.promptEn && <p className="muted review-q2">{it.promptZh}</p>}
+              <ol className="review-options" type="A">
+                {(it.options || []).map((o, n) => (
+                  <li
+                    key={n}
+                    className={`${n === it.answerIndex ? 'opt-key' : ''} ${n === it.chosenIndex ? 'opt-chosen' : ''}`}
+                  >
+                    {o}
+                    {n === it.answerIndex && <b> ← app&apos;s answer</b>}
+                    {n === it.chosenIndex && n !== it.answerIndex && <b> ← her answer</b>}
+                    {n === it.chosenIndex && n === it.answerIndex && <b> (she chose this)</b>}
+                  </li>
+                ))}
+              </ol>
+              {it.explainEn && <p className="muted review-why">App&apos;s reason: {it.explainEn}</p>}
+              <div className="row wrap">
+                {!it.reviewed ? (
+                  <>
+                    <button className="btn small" onClick={() => reviewItem(sess.id, i, { keyWrong: true, reviewed: true })}>
+                      Answer key was wrong
+                    </button>
+                    <button className="btn small secondary" onClick={() => reviewItem(sess.id, i, { keyWrong: false, reviewed: true })}>
+                      Answer key is right
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span className={it.keyWrong ? 'good-text' : 'muted'}>
+                      {it.keyWrong ? '✓ Marked as a wrong key; star given back.' : '✓ Key confirmed.'}
+                    </span>
+                    <button className="link" onClick={() => reviewItem(sess.id, i, { keyWrong: false, reviewed: false })}>
+                      Undo
+                    </button>
+                  </>
+                )}
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+      {all.length > 0 && (
+        <button className="link" onClick={() => setShowDone((v) => !v)}>
+          {showDone ? '← Back to the review list' : `Show reviewed (${done.length})`}
+        </button>
+      )}
+    </section>
+  )
+}
+
 function Report() {
   const { state, totalStars, streak } = useStore()
   const { sessions, vocab } = state
@@ -131,6 +218,7 @@ function Report() {
 
   return (
     <>
+      <ReviewList />
       <section className="stats">
         <div className="stat">
           <div>

@@ -13,6 +13,7 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
   const [chosen, setChosen] = useState(null)
   const [showOther, setShowOther] = useState(false)
   const [answers, setAnswers] = useState([])
+  const [flaggedAt, setFlaggedAt] = useState(null)
 
   const q = round.questions[index]
   const total = round.questions.length
@@ -45,8 +46,20 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
         promptZh: q.prompt_zh,
         rightAnswer: right.en || right.zh,
         chosen: pick.en || pick.zh,
+        options: q.options.map((o) => (o.en && o.zh && o.en !== o.zh ? `${o.en} / ${o.zh}` : o.en || o.zh)),
+        answerIndex: q.answer,
+        chosenIndex: i,
+        explainEn: q.explain_en,
+        flagged: false,
       },
     ])
+  }
+
+  // One flag per round. It never changes the score; a parent decides.
+  function flag() {
+    if (flaggedAt !== null) return
+    setFlaggedAt(index)
+    setAnswers((list) => list.map((a, n) => (n === index ? { ...a, flagged: true } : a)))
   }
 
   function next() {
@@ -143,6 +156,17 @@ export default function Practice({ round, langMode, onQuit, onFinish }) {
                 📚 <strong>{q.word.en}</strong> {q.word.zh && <span>= {q.word.zh}</span>}
               </p>
             )}
+            <div className="flag-row">
+              {flaggedAt === index ? (
+                <span className="flag-done">
+                  🚩 {usRound ? 'Flagged for a parent to check.' : '已標記，請爸媽檢查。 Flagged for a parent to check.'}
+                </span>
+              ) : flaggedAt === null ? (
+                <button className="link flag-link" onClick={flag}>
+                  🚩 {usRound ? 'Answer key looks wrong?' : '答案好像錯了？ Answer key looks wrong?'}
+                </button>
+              ) : null}
+            </div>
             <button className="btn" onClick={next}>
               {index + 1 >= total ? (usRound ? 'See my results' : '看結果 See my results') : usRound ? 'Next' : '下一題 Next'} →
             </button>

@@ -101,6 +101,26 @@ export function StoreProvider({ children }) {
           }
         })
       },
+      // Parent review of one question. keyWrong: the app's answer key was wrong,
+      // so the question counts as correct. reviewed: a parent has looked at it.
+      reviewItem(sessionId, itemIndex, patch) {
+        setState((s) => ({
+          ...s,
+          sessions: s.sessions.map((sess) => {
+            if (sess.id !== sessionId || !Array.isArray(sess.items)) return sess
+            const items = sess.items.map((it, i) => (i === itemIndex ? { ...it, ...patch } : it))
+            const counts = (it) => it.correct || it.keyWrong
+            const correct = items.filter(counts).length
+            return {
+              ...sess,
+              items,
+              correct,
+              englishCorrect: items.filter((it) => it.kind === 'english' && counts(it)).length,
+              stars: starsFor(correct, sess.total),
+            }
+          }),
+        }))
+      },
       resetProgress() {
         setState((s) => ({ ...s, sessions: [], vocab: [] }))
       },
