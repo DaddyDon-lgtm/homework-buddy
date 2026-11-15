@@ -52,8 +52,8 @@ export default function Results({ session, onHome }) {
         <section className="left">
           <h2>今天的英文單字 Words from this round</h2>
           <div className="chips">
-            {session.words.map((w) => (
-              <span key={w.en} className="chip chip-static">
+            {session.words.map((w, i) => (
+              <span key={`${w.en}-${i}`} className="chip chip-static">
                 <strong>{w.en}</strong> {w.zh}
               </span>
             ))}

@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useStore, dayKey } from '../store.jsx'
 import { SUBJECTS, subjectById } from '../topics.js'
-import { listModels } from '../gemini.js'
+import { listModels, KNOWN_MODELS } from '../gemini.js'
 import { listFreeVisionModels, OPENROUTER_DEFAULT } from '../openrouter.js'
 
 function pct(correct, total) {
@@ -296,9 +296,28 @@ function Settings() {
     }
   }
 
-  const modelOptions = models.some((m) => m.id === settings.model)
-    ? models
-    : [{ id: settings.model, label: settings.model }, ...models]
+  const [pinDraft, setPinDraft] = useState('')
+  const [pinMsg, setPinMsg] = useState(null)
+
+  function savePin() {
+    if (!/^\d{4}$/.test(pinDraft)) {
+      setPinMsg({ ok: false, text: 'Use exactly 4 digits.' })
+      return
+    }
+    updateSettings({ pin: pinDraft })
+    setPinDraft('')
+    setPinMsg({ ok: true, text: 'New PIN saved.' })
+  }
+
+  // Known good models first, then anything else the key can use, with no duplicates.
+  const modelOptions = []
+  const seen = new Set()
+  for (const m of [...KNOWN_MODELS, ...models, { id: settings.model, label: settings.model }]) {
+    if (!seen.has(m.id)) {
+      seen.add(m.id)
+      modelOptions.push(m)
+    }
+  }
 
   return (
     <div className="form">
@@ -354,7 +373,7 @@ function Settings() {
             </option>
           ))}
         </select>
-        <small>A "Flash" model reads photos well and is on the free tier. If rounds are slow or time out, try a "Flash-Lite" model.</small>
+        <small>Flash-Lite is the best fit for a free key. Choose 3.8 Flash if billing is turned on, for more careful answers.</small>
       </label>
 
       <h2 className="form-heading">Free backup AI (optional)</h2>
@@ -431,18 +450,25 @@ function Settings() {
       </label>
 
       <label>
-        Parent PIN
-        <input
-          type="password"
-          inputMode="numeric"
-          maxLength={4}
-          value={settings.pin}
-          onChange={(e) => {
-            const v = e.target.value.replace(/\D/g, '')
-            if (v.length === 4) updateSettings({ pin: v })
-          }}
-          placeholder="Type 4 new digits to change"
-        />
+        Change parent PIN
+        <div className="row">
+          <input
+            type="password"
+            inputMode="numeric"
+            autoComplete="off"
+            maxLength={4}
+            value={pinDraft}
+            onChange={(e) => {
+              setPinDraft(e.target.value.replace(/\D/g, ''))
+              setPinMsg(null)
+            }}
+            placeholder="New 4-digit PIN"
+          />
+          <button className="btn small" type="button" onClick={savePin} disabled={pinDraft.length !== 4}>
+            Save PIN
+          </button>
+        </div>
+        {pinMsg && <small className={pinMsg.ok ? 'good-text' : 'bad-text'}>{pinMsg.text}</small>}
       </label>
 
       <button

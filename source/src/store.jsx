@@ -8,7 +8,7 @@ const defaults = {
   settings: {
     childName: '',
     apiKey: '',
-    model: 'gemini-flash-latest',
+    model: 'gemini-3.5-flash-lite',
     openrouterKey: '',
     openrouterModel: 'openrouter/free',
     numQuestions: 8,
@@ -26,6 +26,8 @@ function load() {
     const raw = localStorage.getItem(KEY)
     if (!raw) return defaults
     const saved = JSON.parse(raw)
+    // Older installs used a moving alias; move them to the new default.
+    if (saved.settings?.model === 'gemini-flash-latest') saved.settings.model = defaults.settings.model
     return {
       ...defaults,
       ...saved,

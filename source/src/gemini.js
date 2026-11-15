@@ -6,6 +6,13 @@ const BASE = 'https://generativelanguage.googleapis.com/v1beta'
 const SUBJECT_IDS = ['math', 'mandarin', 'english', 'science', 'social', 'other']
 
 export const MAX_PAGES = 5
+export const FALLBACK_MODEL = 'gemini-3.5-flash-lite'
+
+// Shown in Settings even before the key is tested.
+export const KNOWN_MODELS = [
+  { id: 'gemini-3.5-flash-lite', label: 'Gemini 3.5 Flash-Lite (fastest, best for the free tier)' },
+  { id: 'gemini-3.8-flash', label: 'Gemini 3.8 Flash (more careful, lower free limits)' },
+]
 const TIMEOUT_MS = 120000
 
 export async function listModels(apiKey) {
@@ -82,7 +89,7 @@ Rules:
 - Use Traditional Chinese with Taiwan vocabulary. Never use Simplified characters.
 - For Mandarin (國語) questions, keep the Chinese words or sentences being tested in Chinese inside both prompts, and explain them in English in "prompt_en".
 - Every question has exactly 4 options and exactly one correct answer. Wrong options should come from mistakes a student would really make.
-- Check every answer, and work out all math carefully before you write the options. Vary which position holds the correct answer.
+- Check every answer. Use "work" to calculate or check the correct answer briefly BEFORE writing the options, then make sure the option marked by "answer" matches it. Vary which position holds the correct answer.
 - Explanations are short, kind and show the reasoning (1 to 2 sentences in each language).
 - "word" is one useful English word or phrase from the question that is worth learning, with its Chinese meaning.
 - Never use a real person's name in a question; use generic names. Do not use images, tables or anything that needs drawing. Plain text only. Write fractions like 3/4. Follow Taiwan textbook conventions for math answers: give fractions in simplest form, and write answers greater than 1 as mixed numbers (帶分數), for example 1又1/12 in Chinese and 1 1/12 in English, not 13/12.
@@ -97,6 +104,7 @@ Return only JSON in this shape:
       "kind": "topic" or "english",
       "prompt_zh": "...",
       "prompt_en": "...",
+      "work": "one or two short lines working out the correct answer before you write the options",
       "options": [{"zh": "...", "en": "..."}, {"zh": "...", "en": "..."}, {"zh": "...", "en": "..."}, {"zh": "...", "en": "..."}],
       "answer": 0,
       "explain_zh": "...",
@@ -162,7 +170,9 @@ export function cleanRound(raw, fallback = {}) {
 // One streamed request. Text arrives a piece at a time, so the connection
 // never sits silent and the loading screen can show real progress.
 async function streamOnce({ apiKey, model, parts, thinking, signal, onText }) {
-  const generationConfig = { responseMimeType: 'application/json', temperature: 0.7 }
+  // No temperature: newer Gemini models reject sampling settings, and Google
+  // recommends the default for Gemini 3.
+  const generationConfig = { responseMimeType: 'application/json' }
   if (thinking) generationConfig.thinkingConfig = thinking
   const res = await fetch(`${BASE}/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse`, {
     method: 'POST',
@@ -267,6 +277,7 @@ export async function generateRound({
   const onText = (t) => onProgress?.({ written: Math.min(count, (t.match(/"prompt_en"/g) || []).length), total: count })
 
   let thinking = thinkingFor(model)
+  let triedFallback = false
   let text = ''
   try {
     for (let attempt = 1; ; attempt += 1) {
@@ -284,6 +295,13 @@ export async function generateRound({
         // The model does not accept the thinking setting: retry without it.
         if (e.status === 400 && thinking && /think/i.test(e.detail || e.message)) {
           thinking = null
+          continue
+        }
+        // This model's limit is used up: limits are per model, so try Flash-Lite once.
+        if (e.status === 429 && model !== FALLBACK_MODEL && !triedFallback) {
+          triedFallback = true
+          model = FALLBACK_MODEL
+          thinking = thinkingFor(model)
           continue
         }
         const network = e instanceof TypeError
