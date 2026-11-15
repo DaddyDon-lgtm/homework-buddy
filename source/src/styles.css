@@ -817,3 +817,14 @@ tr:last-child td {
 .loading-progress {
   width: min(420px, 90%);
 }
+
+.form-heading {
+  margin: 12px 0 -8px;
+  padding-top: 14px;
+  border-top: 2px solid var(--line);
+}
+
+.form-note {
+  margin: 0;
+  font-size: 0.95rem;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export default function Loading({ pages, progress, onCancel }) {
+export default function Loading({ pages, progress, backup, onCancel }) {
   const [seconds, setSeconds] = useState(0)
   useEffect(() => {
     const t = setInterval(() => setSeconds((n) => n + 1), 1000)
@@ -33,6 +33,7 @@ export default function Loading({ pages, progress, onCancel }) {
           ))}
         </div>
       )}
+      {backup && <p className="muted">🔁 改用備用 AI · Using the backup AI (OpenRouter)</p>}
       <p className="muted">
         {seconds} 秒 seconds{seconds >= 45 && ' · 有點慢，再等一下 This one is slow, hang on'}
       </p>

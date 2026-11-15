@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useStore, dayKey, starsFor } from './store.jsx'
-import { generateRound } from './gemini.js'
+import { generateWithFallback } from './ai.js'
 import Home from './screens/Home.jsx'
 import Photo from './screens/Photo.jsx'
 import Topics from './screens/Topics.jsx'
@@ -17,6 +17,7 @@ export default function App() {
   const [result, setResult] = useState(null)
   const [error, setError] = useState('')
   const [progress, setProgress] = useState(null)
+  const [service, setService] = useState('gemini')
   const lastRequest = useRef(null)
   const controller = useRef(null)
 
@@ -29,7 +30,7 @@ export default function App() {
   async function startRound(request) {
     lastRequest.current = request
     setError('')
-    if (!settings.apiKey) {
+    if (!settings.apiKey && !settings.openrouterKey) {
       setError('needs-key')
       setScreen('home')
       return
@@ -39,12 +40,14 @@ export default function App() {
     setProgress(null)
     setScreen('loading')
     try {
-      const made = await generateRound({
-        apiKey: settings.apiKey,
-        model: settings.model,
-        count: settings.numQuestions,
+      const made = await generateWithFallback({
+        settings,
         signal: ctl.signal,
         onProgress: setProgress,
+        onService: (name) => {
+          setService(name)
+          setProgress(null)
+        },
         ...request,
       })
       if (ctl.signal.aborted) return
@@ -108,6 +111,7 @@ export default function App() {
         <Loading
           pages={lastRequest.current?.images?.length || 0}
           progress={progress}
+          backup={service === 'openrouter'}
           onCancel={cancelRound}
         />
       )

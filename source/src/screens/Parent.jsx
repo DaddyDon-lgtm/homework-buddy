@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useStore, dayKey } from '../store.jsx'
 import { SUBJECTS, subjectById } from '../topics.js'
 import { listModels } from '../gemini.js'
+import { listFreeVisionModels, OPENROUTER_DEFAULT } from '../openrouter.js'
 
 function pct(correct, total) {
   return total ? `${Math.round((correct / total) * 100)}%` : 'n/a'
@@ -263,6 +264,23 @@ function Settings() {
   const [models, setModels] = useState([])
   const [status, setStatus] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [orModels, setOrModels] = useState([])
+  const [orStatus, setOrStatus] = useState(null)
+  const [orBusy, setOrBusy] = useState(false)
+
+  async function loadOpenRouterModels() {
+    setOrBusy(true)
+    setOrStatus(null)
+    try {
+      const found = await listFreeVisionModels()
+      setOrModels(found)
+      setOrStatus({ ok: true, text: `${found.length} free models that can read photos.` })
+    } catch (e) {
+      setOrStatus({ ok: false, text: e.message || 'Could not reach OpenRouter.' })
+    } finally {
+      setOrBusy(false)
+    }
+  }
 
   async function testKey() {
     setBusy(true)
@@ -295,6 +313,7 @@ function Settings() {
         <small>Stored only on this device. It is never sent anywhere.</small>
       </label>
 
+      <h2 className="form-heading">Main AI: Gemini</h2>
       <label>
         Gemini API key
         <input
@@ -328,6 +347,58 @@ function Settings() {
         <small>A "Flash" model reads photos well and is on the free tier. If rounds are slow or time out, try a "Flash-Lite" model.</small>
       </label>
 
+      <h2 className="form-heading">Free backup AI (optional)</h2>
+      <p className="muted form-note">
+        If Gemini refuses (for example, its free limit is used up), the app switches to OpenRouter automatically.
+        Free models allow about 50 rounds a day.
+      </p>
+      <label>
+        OpenRouter API key
+        <input
+          type="password"
+          value={settings.openrouterKey}
+          onChange={(e) => updateSettings({ openrouterKey: e.target.value.trim() })}
+          placeholder="Paste the key from openrouter.ai/keys"
+          autoComplete="off"
+        />
+        <small>
+          Stored only on this device and sent only to OpenRouter. Free models only: it cannot be charged unless you buy
+          credits on openrouter.ai.
+        </small>
+      </label>
+      <div className="row">
+        <button className="btn small" onClick={loadOpenRouterModels} disabled={orBusy}>
+          {orBusy ? 'Loading…' : 'Load free models'}
+        </button>
+        {orStatus && <span className={orStatus.ok ? 'good-text' : 'bad-text'}>{orStatus.text}</span>}
+      </div>
+      <label>
+        OpenRouter model
+        <select
+          value={settings.openrouterModel}
+          onChange={(e) => updateSettings({ openrouterModel: e.target.value })}
+        >
+          {[
+            ...(orModels.some((m) => m.id === settings.openrouterModel)
+              ? []
+              : [{ id: settings.openrouterModel, label: settings.openrouterModel }]),
+            ...(orModels.some((m) => m.id === OPENROUTER_DEFAULT) || settings.openrouterModel === OPENROUTER_DEFAULT
+              ? []
+              : [{ id: OPENROUTER_DEFAULT, label: 'Free Models Router' }]),
+            ...orModels,
+          ].map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.label === m.id ? m.id : `${m.label} (${m.id})`}
+            </option>
+          ))}
+        </select>
+        <small>
+          "Free Models Router" picks a different free model each time. For steadier quality, press "Load free models"
+          and choose one; the list puts the best guesses first.
+        </small>
+      </label>
+
+      <h2 className="form-heading">Practice</h2>
       <label>
         Questions per round
         <select value={settings.numQuestions} onChange={(e) => updateSettings({ numQuestions: Number(e.target.value) })}>

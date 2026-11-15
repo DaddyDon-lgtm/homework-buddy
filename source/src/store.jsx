@@ -9,6 +9,8 @@ const defaults = {
     childName: '',
     apiKey: '',
     model: 'gemini-flash-latest',
+    openrouterKey: '',
+    openrouterModel: 'openrouter/free',
     numQuestions: 8,
     langMode: 'en-first', // 'en-first' | 'zh-first' | 'both'
     pin: '',

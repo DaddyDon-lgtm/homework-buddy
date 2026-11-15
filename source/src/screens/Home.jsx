@@ -57,7 +57,7 @@ export default function Home({ error, onClearError, onRetry, onPhoto, onTopics, 
       {error === 'needs-key' && (
         <div className="notice">
           <p>
-            <strong>Almost ready!</strong> A parent needs to add the AI key first (Parents, then Settings). Until
+            <strong>Almost ready!</strong> A parent needs to add an AI key first (Parents, then Settings). Until
             then, try a sample round below.
           </p>
           <button className="link" onClick={onClearError}>

@@ -55,7 +55,7 @@ function thinkingFor(model) {
   return { thinkingLevel: 'low' }
 }
 
-function buildPrompt({ pages, subject, topicZh, topicEn, count }) {
+export function buildPrompt({ pages, subject, topicZh, topicEn, count }) {
   const english = Math.max(2, Math.round(count / 4))
   const topical = count - english
   let source
@@ -218,7 +218,31 @@ async function streamOnce({ apiKey, model, parts, thinking, signal, onText }) {
   return text.trim()
 }
 
-const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+// Errors where another AI service might succeed (limits, outages, network).
+export function serviceError(message) {
+  const err = new Error(message)
+  err.canFallback = true
+  return err
+}
+
+export const wait = (ms) => new Promise((r) => setTimeout(r, ms))
+
+// Turns the AI's text into a checked round. Copes with code fences or
+// extra words around the JSON, which smaller models sometimes add.
+export function parseRoundText(text, fallback) {
+  if (!text) throw new Error('The AI sent back an empty reply. Please try again.')
+  let body = text.replace(/^```(?:json)?\s*/i, '').replace(/```\s*$/, '').trim()
+  const start = body.indexOf('{')
+  const end = body.lastIndexOf('}')
+  if (start > 0 || (end >= 0 && end < body.length - 1)) body = body.slice(start, end + 1)
+  let parsed
+  try {
+    parsed = JSON.parse(body)
+  } catch {
+    throw new Error('The AI reply was cut off or could not be read. Please try again.')
+  }
+  return cleanRound(parsed, fallback)
+}
 
 // signal: lets the Cancel button stop the request.
 // onProgress({ written, total }): how many questions have been written so far.
@@ -253,7 +277,7 @@ export async function generateRound({
       } catch (e) {
         if (signal?.aborted) throw new Error('cancelled')
         if (timer.signal.aborted) {
-          throw new Error(
+          throw serviceError(
             'The AI took too long (over 2 minutes). Try again, use fewer pages, or pick a "Flash-Lite" model in the parent Settings.',
           )
         }
@@ -270,10 +294,11 @@ export async function generateRound({
           continue
         }
         if (network) {
-          throw new Error(
+          throw serviceError(
             `Could not reach the AI service. Check the Wi-Fi and try again. [${e.message || 'network error'}]`,
           )
         }
+        if (e.status) e.canFallback = true
         throw e
       }
     }
@@ -282,14 +307,7 @@ export async function generateRound({
     signal?.removeEventListener('abort', stop)
   }
 
-  if (!text) throw new Error('The AI sent back an empty reply. Please try again.')
-  let parsed
-  try {
-    parsed = JSON.parse(text.replace(/^```(?:json)?\s*/i, '').replace(/```$/, ''))
-  } catch {
-    throw new Error('The AI reply was cut off or could not be read. Please try again.')
-  }
-  return cleanRound(parsed, { subject, topicZh, topicEn })
+  return parseRoundText(text, { subject, topicZh, topicEn })
 }
 
 // Shrinks a photo so it uploads quickly, and returns it as base64 JPEG.
