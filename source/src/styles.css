@@ -2208,3 +2208,169 @@ tr:last-child td {
 .center-row {
   justify-content: center;
 }
+
+/* ---------- lesson diagrams ---------- */
+.lesson-fig {
+  margin: 14px 0 0;
+  padding: 10px;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: var(--bw) solid var(--line);
+}
+.lesson-fig svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.lesson-fig figcaption {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+}
+
+/* ---------- hands-on Try It (sort / order) ---------- */
+.task {
+  display: grid;
+  gap: 14px;
+}
+.task-help {
+  margin: 0;
+  color: var(--text-soft);
+}
+.task-pool {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: var(--bw) dashed var(--line);
+}
+.chip {
+  font: inherit;
+  font-weight: 600;
+  font-size: 1.02rem;
+  min-height: 48px;
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: var(--bw) solid var(--line);
+  background: var(--surface-strong);
+  color: var(--text);
+  cursor: pointer;
+  text-align: left;
+}
+.chip-sel {
+  border-color: var(--a1);
+  box-shadow: 0 0 0 3px var(--a1);
+  transform: translateY(-2px);
+}
+.chip-in {
+  border-color: var(--a2);
+}
+.chip-good {
+  border-color: var(--good);
+  background: var(--good-soft);
+}
+.chip-bad {
+  border-color: var(--bad);
+  background: var(--bad-soft);
+}
+.chip-fix {
+  color: var(--text-soft);
+  font-weight: 500;
+}
+.task-buckets {
+  display: grid;
+  gap: 10px;
+}
+.task-buckets.cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+.task-buckets.cols-3 {
+  grid-template-columns: 1fr 1fr 1fr;
+}
+.bucket {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  min-height: 150px;
+  padding: 12px;
+  border-radius: var(--radius);
+  border: var(--bw) solid var(--line);
+  background: var(--surface);
+  cursor: pointer;
+}
+.bucket .chip {
+  border-radius: 14px;
+  font-size: 0.95rem;
+}
+.bucket-ready {
+  border-color: var(--a1);
+  border-style: dashed;
+}
+.bucket-title {
+  margin: 0 0 4px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  text-align: center;
+}
+.order-slots {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+.slot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 6px 12px;
+  border-radius: var(--radius);
+  border: var(--bw) dashed var(--line);
+}
+.slot-filled {
+  border-style: solid;
+  border-color: var(--a2);
+}
+.slot-good {
+  border-color: var(--good);
+  background: var(--good-soft);
+}
+.slot-bad {
+  border-color: var(--bad);
+  background: var(--bad-soft);
+}
+.slot-num {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: var(--a1);
+  color: var(--a1-text);
+  flex: none;
+}
+.slot-chip {
+  font: inherit;
+  font-weight: 600;
+  background: none;
+  border: 0;
+  color: var(--text);
+  text-align: left;
+  cursor: pointer;
+  padding: 8px 0;
+  flex: 1;
+}
+.slot-empty {
+  color: var(--text-soft);
+  font-style: italic;
+}
+.task-check {
+  justify-self: start;
+}

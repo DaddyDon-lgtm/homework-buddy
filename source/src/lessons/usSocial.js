@@ -34,6 +34,7 @@ export const US_SOCIAL_LESSONS = [
         h: `Pacific Northwest`,
         text: `A rainy coast with huge forests. Nations such as the **Tlingit** fished for **salmon**, built **cedar plank houses**, and carved **totem poles**.`,
       },
+      { h: `Putting it together`, fig: `regions` },
     ],
     watch: `There was no single “Indian” way of life. Hundreds of nations had their own languages, governments and traditions, and many of these nations still exist today.`,
     tryIt: [
@@ -91,6 +92,7 @@ export const US_SOCIAL_LESSONS = [
           `From the Americas to Europe: corn, potatoes, tomatoes, chocolate.`,
           `From Europe to the Americas: horses, cows, wheat, and diseases like **smallpox**.`,
         ],
+        fig: `columbian`,
       },
     ],
     watch: `Diseases such as smallpox killed a very large share of American Indians, because their bodies had never met these germs before. This was one of the biggest changes caused by contact.`,
@@ -103,11 +105,13 @@ export const US_SOCIAL_LESSONS = [
         why: `New trade routes meant riches, so that is the “gold” reason. Religion is “God,” and fame is “glory.”`,
       },
       {
-        q: `Which item traveled FROM the Americas TO Europe in the Columbian Exchange?`,
-        options: [`horses`, `wheat`, `potatoes`, `cows`],
-        answer: 2,
-        hint: `Three of these came from Europe. Which one grew in the Americas first?`,
-        why: `Potatoes first grew in South America. Horses, wheat and cows were brought from Europe.`,
+        type: `sort`,
+        q: `Which way did each one travel in the Columbian Exchange?`,
+        items: [`🌽 corn`, `🐎 horses`, `🥔 potatoes`, `🌾 wheat`, `🍫 chocolate`, `🐄 cows`],
+        buckets: [`Americas → Europe`, `Europe → Americas`],
+        answers: [0, 1, 0, 1, 0, 1],
+        hint: `Corn, potatoes and chocolate first grew in the Americas.`,
+        why: `Corn, potatoes and chocolate (cacao) came from the Americas. Horses, wheat and cows were brought from Europe.`,
       },
       {
         q: `Why did smallpox harm American Indians so badly?`,
@@ -129,7 +133,7 @@ export const US_SOCIAL_LESSONS = [
       reveal: `Colony B could grow big crops like tobacco and rice. Colony A would turn to fishing, shipbuilding and trade. **Geography** shaped how each colony made a living.`,
     },
     learn: [
-      { text: `The 13 English colonies were along the Atlantic coast. **Jamestown, Virginia** (1607) was the first one that lasted. Historians group the colonies into three regions.` },
+      { text: `The 13 English colonies were along the Atlantic coast. **Jamestown, Virginia** (1607) was the first one that lasted. Historians group the colonies into three regions.`, fig: `colonies` },
       {
         h: `New England Colonies`,
         text: `Massachusetts, New Hampshire, Connecticut, Rhode Island. Rocky soil and cold winters, so people turned to **fishing, shipbuilding and trade**. Many settlers, like the Pilgrims and Puritans, came for religious reasons.`,
@@ -146,11 +150,13 @@ export const US_SOCIAL_LESSONS = [
     watch: `Southern plantations depended on the work of **enslaved Africans**, who were brought by force and had no freedom or pay. Slavery was legal in all 13 colonies, but it was largest in the South.`,
     tryIt: [
       {
-        q: `Which region was called the “breadbasket” colonies?`,
-        options: [`New England`, `Middle Colonies`, `Southern Colonies`, `Jamestown`],
-        answer: 1,
-        hint: `Bread is made from wheat. Where did wheat grow well?`,
-        why: `The Middle Colonies had good soil for wheat, which is used to make bread.`,
+        type: `sort`,
+        q: `Put each colony in its region.`,
+        items: [`Massachusetts`, `Pennsylvania`, `Virginia`, `Connecticut`, `New York`, `Georgia`],
+        buckets: [`New England`, `Middle`, `Southern`],
+        answers: [0, 1, 2, 0, 1, 2],
+        hint: `Look back at the diagram: New England is farthest north, the Southern Colonies farthest south.`,
+        why: `New England: Massachusetts, Connecticut. Middle: Pennsylvania, New York. Southern: Virginia, Georgia.`,
       },
       {
         q: `Why did New England depend on fishing and shipbuilding?`,
@@ -201,6 +207,7 @@ export const US_SOCIAL_LESSONS = [
           `**Intolerable Acts** (1774): Britain punished Massachusetts and closed Boston Harbor.`,
         ],
       },
+      { h: `The road to war`, fig: `causes-timeline` },
     ],
     watch: `Not every colonist wanted to break away. **Patriots** wanted independence, **Loyalists** stayed loyal to Britain, and many people were somewhere in between.`,
     tryIt: [
@@ -219,11 +226,12 @@ export const US_SOCIAL_LESSONS = [
         why: `The French and Indian War left Britain with big debts, so Parliament taxed the colonies to help pay.`,
       },
       {
-        q: `Which of these events came FIRST?`,
-        options: [`Boston Tea Party`, `Stamp Act`, `Intolerable Acts`, `Boston Massacre`],
-        answer: 1,
-        hint: `Look at the years: 1765, 1770, 1773, 1774.`,
-        why: `The Stamp Act was 1765, before the Boston Massacre (1770), the Tea Party (1773) and the Intolerable Acts (1774).`,
+        type: `order`,
+        q: `Put these events in order, from first to last.`,
+        items: [`Stamp Act`, `Boston Massacre`, `Boston Tea Party`, `Intolerable Acts`],
+        show: [2, 0, 3, 1],
+        hint: `Taxes came first. The Intolerable Acts were a punishment for something.`,
+        why: `Stamp Act (1765), Boston Massacre (1770), Boston Tea Party (1773), Intolerable Acts (1774), which punished Boston for the Tea Party.`,
       },
     ],
   },
@@ -249,6 +257,7 @@ export const US_SOCIAL_LESSONS = [
           `**Complaints**: a long list of wrongs by King George III, such as taxing the colonies without their consent.`,
           `**The declaration itself**: the colonies are now free and independent states.`,
         ],
+        fig: `declaration`,
       },
       {
         h: `When a government breaks the deal`,
@@ -293,13 +302,14 @@ export const US_SOCIAL_LESSONS = [
     learn: [
       {
         h: `Key events`,
-        ex: [
+        fig: `revwar-timeline`,
+        say: [
           `**1775, Lexington and Concord**: the first battles of the war.`,
           `**1777, Saratoga**: a big American win that convinced **France** to join the American side.`,
           `**1777–1778, Valley Forge**: Washington’s army survived a hard winter and trained to fight better.`,
           `**1781, Yorktown**: American and French forces trapped the British army, and it surrendered.`,
           `**1783, Treaty of Paris**: Britain recognized the United States as independent.`,
-        ],
+        ].join('. '),
       },
       {
         h: `American strengths`,
@@ -323,11 +333,12 @@ export const US_SOCIAL_LESSONS = [
         why: `American and French forces trapped the British at Yorktown, Virginia, where they surrendered in 1781.`,
       },
       {
-        q: `Which list is in the correct order?`,
-        options: [`Yorktown, Saratoga, Lexington`, `Lexington, Saratoga, Yorktown`, `Saratoga, Lexington, Yorktown`, `Lexington, Yorktown, Saratoga`],
-        answer: 1,
-        hint: `1775, 1777, 1781.`,
-        why: `Lexington (1775) came first, then Saratoga (1777), then Yorktown (1781).`,
+        type: `order`,
+        q: `Put these events of the war in order, from first to last.`,
+        items: [`Lexington and Concord`, `Saratoga`, `Yorktown`, `Treaty of Paris`],
+        show: [2, 3, 0, 1],
+        hint: `The war began at Lexington and ended with a treaty.`,
+        why: `Lexington and Concord (1775), Saratoga (1777), Yorktown (1781), Treaty of Paris (1783).`,
       },
     ],
   },
@@ -350,6 +361,7 @@ export const US_SOCIAL_LESSONS = [
           `There was **no president** to carry out laws and **no national courts**.`,
           `Changing the Articles needed **all 13 states** to agree.`,
         ],
+        fig: `articles-vs-constitution`,
       },
       {
         h: `Shays’ Rebellion (1786–1787)`,
@@ -362,6 +374,7 @@ export const US_SOCIAL_LESSONS = [
       {
         h: `The Great Compromise`,
         text: `Big states and small states disagreed about votes in Congress. The answer was two houses: the **Senate** (2 senators from every state) and the **House of Representatives** (more members for states with more people).`,
+        fig: `compromise`,
       },
     ],
     watch: `The Constitution did not get rid of the states. It created **federalism**: power is shared between the national government and the state governments.`,
@@ -411,6 +424,7 @@ export const US_SOCIAL_LESSONS = [
           `**6th Amendment**: the right to a fast, fair trial and a lawyer.`,
           `**8th Amendment**: no cruel and unusual punishment.`,
         ],
+        fig: `rights`,
       },
       {
         h: `Why it matters`,
@@ -474,16 +488,19 @@ export const US_SOCIAL_LESSONS = [
           `The Supreme Court can rule that a law goes against the Constitution.`,
           `The Senate approves or rejects the President’s choices for Supreme Court justices.`,
         ],
+        fig: `branches`,
       },
     ],
     watch: `It is easy to mix up the branches. Remember: **L**egislative = **L**aws are made. **E**xecutive = **E**nforces (carries out) the laws. **J**udicial = **J**udges.`,
     tryIt: [
       {
-        q: `Which branch makes the laws?`,
-        options: [`Executive`, `Judicial`, `Legislative`, `Military`],
-        answer: 2,
-        hint: `L for Laws.`,
-        why: `The legislative branch, Congress, makes the laws.`,
+        type: `sort`,
+        q: `Which branch does each job?`,
+        items: [`Makes laws`, `Vetoes a bill`, `Decides if a law follows the Constitution`, `Commands the military`, `Overrides a veto`, `Explains what laws mean`],
+        buckets: [`Legislative`, `Executive`, `Judicial`],
+        answers: [0, 1, 2, 1, 0, 2],
+        hint: `L for Laws (Congress), E for Enforces (the President), J for Judges (the courts).`,
+        why: `Legislative (Congress): makes laws, overrides vetoes. Executive (the President): vetoes bills, commands the military. Judicial (the courts): explains laws and decides if they follow the Constitution.`,
       },
       {
         q: `The President vetoes a bill that Congress passed. This is an example of:`,
@@ -522,10 +539,8 @@ export const US_SOCIAL_LESSONS = [
       },
       {
         h: `Responsibilities`,
-        ex: [
-          `**Required by law**: obey laws, pay taxes, serve on a **jury** when called.`,
-          `**Expected of good citizens**: vote, stay informed, respect others’ rights, help the community.`,
-        ],
+        fig: `duties`,
+        say: `Required by law: obey laws, pay taxes, serve on a jury when called. Expected of good citizens: vote, stay informed, respect others’ rights, help the community.`,
       },
       {
         h: `The common good`,
@@ -535,11 +550,13 @@ export const US_SOCIAL_LESSONS = [
     watch: `In the US, voting is a right, but the law does not force anyone to vote. That is why it is called a **responsibility**: democracy only works when citizens choose to take part.`,
     tryIt: [
       {
-        q: `Which responsibility is required by law?`,
-        options: [`volunteering at a food bank`, `serving on a jury when called`, `joining a club`, `writing to a newspaper`],
-        answer: 1,
-        hint: `Three of these are good things to do, but only one is the law.`,
-        why: `Citizens must serve on a jury when called. The others are good choices, but not required.`,
+        type: `sort`,
+        q: `Is each one required by law, or a choice good citizens make?`,
+        items: [`Pay taxes`, `Vote`, `Serve on a jury`, `Volunteer`, `Obey laws`, `Stay informed`],
+        buckets: [`Required by law`, `Good citizen’s choice`],
+        answers: [0, 1, 0, 1, 0, 1],
+        hint: `Voting is a right, but the law does not force anyone to vote.`,
+        why: `The law requires paying taxes, serving on a jury and obeying laws. Voting, volunteering and staying informed are choices good citizens make.`,
       },
       {
         q: `How old must US citizens be to vote in national elections?`,
@@ -576,6 +593,7 @@ export const US_SOCIAL_LESSONS = [
         h: `Opportunity cost`,
         text: `The **next best choice** you give up when you decide.`,
         ex: [`If you spend Saturday at the beach, your opportunity cost might be the movie you did not see.`],
+        fig: `opp-cost`,
       },
       {
         h: `Incentives`,
@@ -588,6 +606,7 @@ export const US_SOCIAL_LESSONS = [
           `The colonies traded tobacco and furs to Britain and bought cloth and tools.`,
           `Today, Taiwan sells computer chips around the world and buys foods like wheat and soybeans from the US.`,
         ],
+        fig: `trade`,
       },
     ],
     watch: `Opportunity cost is **only the next best choice**, not everything you gave up. If you had five options, only your second favorite counts.`,
@@ -629,6 +648,7 @@ export const US_SOCIAL_LESSONS = [
       {
         h: `Saving`,
         text: `Saving means keeping money for later instead of spending it now. A **budget** is a plan for your money: some to spend, some to save, some to share.`,
+        fig: `savings`,
       },
       {
         h: `Banks`,
@@ -645,6 +665,7 @@ export const US_SOCIAL_LESSONS = [
       {
         h: `Investing`,
         text: `Investing means buying something, like a small part of a company (a **stock**), hoping it grows in value. It can grow more than savings, but there is **risk**: you can also lose money.`,
+        fig: `risk`,
       },
     ],
     watch: `**Higher reward usually means higher risk.** A savings account is very safe but grows slowly. Stocks can grow faster, but they can also go down.`,

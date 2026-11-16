@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import Mascot from '../Mascot.jsx'
 import { useStore } from '../store.jsx'
+import { LessonFigure } from '../lessons/figures.jsx'
+import { SortTask, OrderTask, taskText } from '../lessons/tasks.jsx'
 
 // Turns **bold**, *italic* and new lines into elements.
 function Rich({ text }) {
@@ -62,6 +64,8 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
   const [picked, setPicked] = useState(null)
   const [showHint, setShowHint] = useState(false)
   const [results, setResults] = useState([])
+  const [taskOk, setTaskOk] = useState(false)
+  const [attempt, setAttempt] = useState(0)
   const speech = useSpeech()
 
   const go = (n) => {
@@ -71,7 +75,7 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
   }
 
   const learnText = lesson.learn
-    .map((b) => [b.h, b.text, ...(b.ex || []), b.passage].filter(Boolean).join('. '))
+    .map((b) => [b.h, b.text, ...(b.ex || []), b.passage, b.say].filter(Boolean).join('. '))
     .join('. ')
   const readText =
     step === 0
@@ -81,12 +85,12 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
         : step === 2
           ? `Watch out! ${lesson.watch}`
           : step === 3
-            ? `${lesson.tryIt[qi].passage ? `${lesson.tryIt[qi].passage} ` : ''}${lesson.tryIt[qi].q}. ${lesson.tryIt[qi].options.join('. ')}`
+            ? `${lesson.tryIt[qi].passage ? `${lesson.tryIt[qi].passage} ` : ''}${taskText(lesson.tryIt[qi])}`
             : ''
 
   const q = lesson.tryIt[qi]
   const answered = picked !== null
-  const correct = answered && picked === q.answer
+  const correct = answered && (q.type ? taskOk : picked === q.answer)
   const score = results.filter(Boolean).length
 
   function pick(i) {
@@ -94,6 +98,13 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
     speech.stop()
     setPicked(i)
     setResults((r) => [...r, i === q.answer])
+  }
+
+  function taskDone(ok) {
+    speech.stop()
+    setTaskOk(ok)
+    setPicked('task')
+    setResults((r) => [...r, ok])
   }
 
   function nextQuestion() {
@@ -112,6 +123,7 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
     setPicked(null)
     setShowHint(false)
     setResults([])
+    setAttempt((a) => a + 1)
     go(1)
   }
 
@@ -204,6 +216,7 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
                   ))}
                 </ul>
               )}
+              {b.fig && <LessonFigure id={b.fig} />}
             </section>
           ))}
           <button className="btn lesson-next" onClick={() => go(2)}>
@@ -254,6 +267,9 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
                 </button>
               ))}
           </section>
+          {q.type === 'sort' && <SortTask key={`${attempt}-${qi}`} q={q} onDone={taskDone} />}
+          {q.type === 'order' && <OrderTask key={`${attempt}-${qi}`} q={q} onDone={taskDone} />}
+          {!q.type && (
           <div className="options options-one">
             {q.options.map((o, i) => {
               let cls = 'option'
@@ -272,6 +288,7 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
               )
             })}
           </div>
+          )}
           {answered && (
             <div className={`feedback ${correct ? 'feedback-good' : 'feedback-bad'}`}>
               <Mascot mood={correct ? 'cheer' : 'oops'} size={84} className="feedback-mascot" />
