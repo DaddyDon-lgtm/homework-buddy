@@ -53,7 +53,7 @@ function useSpeech() {
 
 const STEPS = ['Goal', 'Learn', 'Watch out', 'Try it', 'Done']
 
-export default function Lesson({ lesson, number, onBack, onPractice }) {
+export default function Lesson({ lesson, number, subjectId, onBack, onPractice }) {
   const { state, completeLesson } = useStore()
   const mascotName = state.settings.mascotName
   const [step, setStep] = useState(0)
@@ -314,7 +314,7 @@ export default function Lesson({ lesson, number, onBack, onPractice }) {
             <>
               <p>{mascotName ? `${mascotName} says: ` : ''}You&apos;re ready to practice! Finishing the practice round earns a 🎟️ Beat Battle ticket.</p>
               <button className="btn" onClick={onPractice}>
-                ✨ Practice {lesson.topic.split(':')[0].toLowerCase()} →
+                {subjectId === 'us-english' ? `✨ Practice ${lesson.topic.split(':')[0].toLowerCase()} →` : '✨ Practice this topic →'}
               </button>
             </>
           )}

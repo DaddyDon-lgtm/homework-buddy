@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../topics.js'
-import { lessonForTopic, US_ENGLISH_LESSONS } from '../lessons/usEnglish.js'
+import { lessonForTopic, lessonsFor, lessonsDone } from '../lessons/index.js'
 import { useStore } from '../store.jsx'
 
 export default function Topics({ onBack, onStart, onLesson, initialSubject }) {
@@ -33,18 +33,18 @@ export default function Topics({ onBack, onStart, onLesson, initialSubject }) {
         ))}
       </div>
 
-      {subject.id === 'us-english' && (
+      {lessonsFor(subject.id).length > 0 && (
         <p className="muted lesson-intro">
           📖 Each topic has a 10-minute lesson. Start with the lesson, then practice.{' '}
           <strong>
-            {US_ENGLISH_LESSONS.filter((l) => state.lessons?.[l.id]?.done).length} of {US_ENGLISH_LESSONS.length} lessons done
+            {lessonsDone(state.lessons, subject.id)} of {lessonsFor(subject.id).length} lessons done
           </strong>
         </p>
       )}
 
       <div className="topic-grid">
         {subject.topics.map((t) => {
-          const lesson = subject.id === 'us-english' ? lessonForTopic(t.zh) : null
+          const lesson = lessonForTopic(subject.id, t.zh)
           if (!lesson) {
             return (
               <button key={t.zh} className="topic" onClick={() => start(t)}>
@@ -53,7 +53,7 @@ export default function Topics({ onBack, onStart, onLesson, initialSubject }) {
               </button>
             )
           }
-          const n = US_ENGLISH_LESSONS.indexOf(lesson) + 1
+          const n = lessonsFor(subject.id).indexOf(lesson) + 1
           const done = state.lessons?.[lesson.id]?.done
           return (
             <div key={t.zh} className={`topic topic-lesson ${done ? 'is-done' : ''}`}>

@@ -3,7 +3,7 @@ import { useStore, dayKey } from '../store.jsx'
 import { SUBJECTS, subjectById } from '../topics.js'
 import { listModels, KNOWN_MODELS } from '../gemini.js'
 import { listFreeVisionModels, OPENROUTER_DEFAULT } from '../openrouter.js'
-import { US_ENGLISH_LESSONS } from '../lessons/usEnglish.js'
+import { LESSON_SETS, lessonsDone } from '../lessons/index.js'
 
 function pct(correct, total) {
   return total ? `${Math.round((correct / total) * 100)}%` : 'n/a'
@@ -211,11 +211,14 @@ function Report() {
   }
 
   if (sessions.length === 0) {
-    const lessonsDone = US_ENGLISH_LESSONS.filter((l) => state.lessons?.[l.id]?.done).length
+    const doneSoFar = Object.entries(LESSON_SETS)
+      .map(([id, set]) => [set.label, lessonsDone(state.lessons, id), set.lessons.length])
+      .filter(([, n]) => n > 0)
+      .map(([label, n, total]) => `${label} ${n}/${total}`)
     return (
       <p className="lead">
         No practice yet. Reports appear here after the first finished round.
-        {lessonsDone > 0 && ` US English lessons done so far: ${lessonsDone}/${US_ENGLISH_LESSONS.length}.`}
+        {doneSoFar.length > 0 && ` Lessons done so far: ${doneSoFar.join(', ')}.`}
       </p>
     )
   }
@@ -257,14 +260,16 @@ function Report() {
             <span>Day streak</span>
           </div>
         </div>
-        <div className="stat">
-          <div>
-            <strong>
-              {US_ENGLISH_LESSONS.filter((l) => state.lessons?.[l.id]?.done).length}/{US_ENGLISH_LESSONS.length}
-            </strong>
-            <span>US English lessons done</span>
+        {Object.entries(LESSON_SETS).map(([id, set]) => (
+          <div className="stat" key={id}>
+            <div>
+              <strong>
+                {lessonsDone(state.lessons, id)}/{set.lessons.length}
+              </strong>
+              <span>{set.label} lessons done</span>
+            </div>
           </div>
-        </div>
+        ))}
         <div className="stat">
           <div>
             <strong>{vocab.length}</strong>

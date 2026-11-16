@@ -11,7 +11,7 @@ import Results from './screens/Results.jsx'
 import Parent from './screens/Parent.jsx'
 import BeatBattle from './screens/BeatBattle.jsx'
 import Lesson from './screens/Lesson.jsx'
-import { US_ENGLISH_LESSONS } from './lessons/usEnglish.js'
+import { findLesson } from './lessons/index.js'
 import { buildBeatPool } from './beat/pool.js'
 
 export default function App() {
@@ -159,22 +159,24 @@ export default function App() {
           initialSubject={topicTab}
           onLesson={(id) => {
             setLessonId(id)
-            setTopicTab('us-english')
+            setTopicTab(findLesson(id)?.subjectId || 'us-english')
             setScreen('lesson')
           }}
         />
       )
     case 'lesson': {
-      const lesson = US_ENGLISH_LESSONS.find((l) => l.id === lessonId)
-      if (!lesson) return null
+      const found = findLesson(lessonId)
+      if (!found) return null
+      const { lesson, subjectId, number } = found
       return (
         <Lesson
           key={lesson.id}
           lesson={lesson}
-          number={US_ENGLISH_LESSONS.indexOf(lesson) + 1}
+          number={number}
+          subjectId={subjectId}
           onBack={() => setScreen('topics')}
           onPractice={() =>
-            startRound({ source: 'topic', subject: 'us-english', topicZh: lesson.topic, topicEn: lesson.standard })
+            startRound({ source: 'topic', subject: subjectId, topicZh: lesson.topic, topicEn: lesson.standard })
           }
         />
       )
