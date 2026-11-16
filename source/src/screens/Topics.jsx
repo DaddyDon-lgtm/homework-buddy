@@ -1,8 +1,11 @@
 import { useState } from 'react'
 import { SUBJECTS } from '../topics.js'
+import { lessonForTopic, US_ENGLISH_LESSONS } from '../lessons/usEnglish.js'
+import { useStore } from '../store.jsx'
 
-export default function Topics({ onBack, onStart }) {
-  const [subjectId, setSubjectId] = useState(SUBJECTS[0].id)
+export default function Topics({ onBack, onStart, onLesson, initialSubject }) {
+  const { state } = useStore()
+  const [subjectId, setSubjectId] = useState(initialSubject || SUBJECTS[0].id)
   const [custom, setCustom] = useState('')
   const subject = SUBJECTS.find((s) => s.id === subjectId)
 
@@ -30,13 +33,46 @@ export default function Topics({ onBack, onStart }) {
         ))}
       </div>
 
+      {subject.id === 'us-english' && (
+        <p className="muted lesson-intro">
+          📖 Each topic has a 10-minute lesson. Start with the lesson, then practice.{' '}
+          <strong>
+            {US_ENGLISH_LESSONS.filter((l) => state.lessons?.[l.id]?.done).length} of {US_ENGLISH_LESSONS.length} lessons done
+          </strong>
+        </p>
+      )}
+
       <div className="topic-grid">
-        {subject.topics.map((t) => (
-          <button key={t.zh} className="topic" onClick={() => start(t)}>
-            <strong>{t.zh}</strong>
-            <span>{t.en}</span>
-          </button>
-        ))}
+        {subject.topics.map((t) => {
+          const lesson = subject.id === 'us-english' ? lessonForTopic(t.zh) : null
+          if (!lesson) {
+            return (
+              <button key={t.zh} className="topic" onClick={() => start(t)}>
+                <strong>{t.zh}</strong>
+                <span>{t.en}</span>
+              </button>
+            )
+          }
+          const n = US_ENGLISH_LESSONS.indexOf(lesson) + 1
+          const done = state.lessons?.[lesson.id]?.done
+          return (
+            <div key={t.zh} className={`topic topic-lesson ${done ? 'is-done' : ''}`}>
+              <span className="lesson-chip">
+                {done ? '✓ Lesson done' : `📖 Lesson ${n}`}
+              </span>
+              <strong>{t.zh}</strong>
+              <span>{t.en}</span>
+              <div className="row topic-actions">
+                <button className="btn small" onClick={() => onLesson(lesson.id)}>
+                  {done ? 'Review lesson' : 'Start lesson'}
+                </button>
+                <button className="btn small secondary" onClick={() => start(t)}>
+                  Practice
+                </button>
+              </div>
+            </div>
+          )
+        })}
       </div>
 
       <form

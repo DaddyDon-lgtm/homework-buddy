@@ -10,6 +10,8 @@ import Practice from './screens/Practice.jsx'
 import Results from './screens/Results.jsx'
 import Parent from './screens/Parent.jsx'
 import BeatBattle from './screens/BeatBattle.jsx'
+import Lesson from './screens/Lesson.jsx'
+import { US_ENGLISH_LESSONS } from './lessons/usEnglish.js'
 import { buildBeatPool } from './beat/pool.js'
 
 export default function App() {
@@ -22,6 +24,8 @@ export default function App() {
   const [progress, setProgress] = useState(null)
   const [service, setService] = useState('gemini')
   const [beatQuestions, setBeatQuestions] = useState(null)
+  const [lessonId, setLessonId] = useState(null)
+  const [topicTab, setTopicTab] = useState(null)
   const lastRequest = useRef(null)
   const controller = useRef(null)
 
@@ -148,7 +152,33 @@ export default function App() {
     case 'photo':
       return <Photo onBack={goHome} onStart={startRound} />
     case 'topics':
-      return <Topics onBack={goHome} onStart={startRound} />
+      return (
+        <Topics
+          onBack={goHome}
+          onStart={startRound}
+          initialSubject={topicTab}
+          onLesson={(id) => {
+            setLessonId(id)
+            setTopicTab('us-english')
+            setScreen('lesson')
+          }}
+        />
+      )
+    case 'lesson': {
+      const lesson = US_ENGLISH_LESSONS.find((l) => l.id === lessonId)
+      if (!lesson) return null
+      return (
+        <Lesson
+          key={lesson.id}
+          lesson={lesson}
+          number={US_ENGLISH_LESSONS.indexOf(lesson) + 1}
+          onBack={() => setScreen('topics')}
+          onPractice={() =>
+            startRound({ source: 'topic', subject: 'us-english', topicZh: lesson.topic, topicEn: lesson.standard })
+          }
+        />
+      )
+    }
     case 'loading':
       return (
         <Loading

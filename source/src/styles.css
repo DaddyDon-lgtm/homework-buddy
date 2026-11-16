@@ -2038,3 +2038,173 @@ tr:last-child td {
   color: var(--text-soft);
   font-size: 1rem;
 }
+
+/* ---------- lessons ---------- */
+
+.lesson-intro {
+  margin: -6px 0 0;
+}
+
+.topic-lesson {
+  gap: 4px;
+}
+
+.topic-lesson.is-done {
+  border-color: var(--good);
+}
+
+.lesson-chip {
+  align-self: flex-start;
+  font-size: 0.8rem !important;
+  font-weight: 900 !important;
+  color: var(--a1) !important;
+}
+
+.is-done .lesson-chip {
+  color: var(--good) !important;
+}
+
+.topic-actions {
+  margin-top: 8px;
+}
+
+.lesson-head h1 {
+  margin-bottom: 8px;
+}
+
+.lesson-steps {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.lesson-step {
+  font-size: 0.8rem;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: var(--bw) solid var(--line);
+  color: var(--text-soft);
+}
+
+.lesson-step.on {
+  background: var(--a1);
+  border-color: var(--a1);
+  color: var(--a1-text);
+}
+
+.lesson-step.done {
+  color: var(--good);
+}
+
+.lesson-card {
+  background: var(--surface);
+  border: var(--bw) solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 20px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.lesson-card h2 {
+  margin: 0;
+  color: var(--a2);
+}
+
+[data-theme='kawaii'] .lesson-card h2 {
+  color: var(--a1-deep);
+}
+
+[data-theme='manga'] .lesson-card h2 {
+  color: var(--a2);
+}
+
+.lesson-card p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.lesson-big {
+  font-size: 1.25rem !important;
+  font-weight: 700;
+}
+
+.rich-line {
+  display: block;
+}
+
+.hook-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.hook-row .mascot {
+  flex: none;
+}
+
+.lesson-example {
+  font-size: 1.2rem !important;
+  background: var(--surface-strong);
+  border-radius: 14px;
+  padding: 10px 14px;
+  margin-bottom: 8px !important;
+}
+
+.lesson-ask {
+  font-weight: 900;
+}
+
+.lesson-reveal {
+  border-left: 5px solid var(--a3);
+  padding: 8px 14px;
+  background: var(--surface-strong);
+  border-radius: 0 14px 14px 0;
+}
+
+.lesson-ex {
+  margin: 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 1.08rem;
+}
+
+.lesson-passage {
+  margin: 4px 0;
+  padding: 12px 16px;
+  background: var(--surface-strong);
+  border-radius: 14px;
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+.lesson-passage .rich-line + .rich-line {
+  margin-top: 8px;
+}
+
+.watch {
+  border-color: var(--a3);
+}
+
+.lesson-next {
+  align-self: flex-end;
+  font-size: 1.2rem;
+}
+
+.options-one {
+  grid-template-columns: 1fr;
+}
+
+.center-card {
+  align-items: center;
+  text-align: center;
+}
+
+.center-row {
+  justify-content: center;
+}

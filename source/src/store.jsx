@@ -21,6 +21,7 @@ const defaults = {
   vocab: [],
   tickets: 0,
   beat: { best: 0, plays: 0, muted: false },
+  lessons: {},
 }
 
 export const MAX_TICKETS = 3
@@ -37,6 +38,7 @@ function load() {
       ...saved,
       settings: { ...defaults.settings, ...(saved.settings || {}) },
       beat: { ...defaults.beat, ...(saved.beat || {}) },
+      lessons: { ...(saved.lessons || {}) },
     }
   } catch {
     return defaults
@@ -126,6 +128,18 @@ export function StoreProvider({ children }) {
             }
           }),
         }))
+      },
+      completeLesson(id, score) {
+        setState((s) => {
+          const prev = s.lessons?.[id]
+          return {
+            ...s,
+            lessons: {
+              ...s.lessons,
+              [id]: { done: true, best: Math.max(prev?.best || 0, score), times: (prev?.times || 0) + 1, at: new Date().toISOString() },
+            },
+          }
+        })
       },
       useTicket() {
         setState((s) => ({ ...s, tickets: Math.max(0, (s.tickets || 0) - 1) }))
