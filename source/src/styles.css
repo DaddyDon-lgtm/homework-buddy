@@ -2374,3 +2374,12 @@ tr:last-child td {
 .task-check {
   justify-self: start;
 }
+.map-pick-row {
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.task .lesson-fig {
+  margin-top: 0;
+}

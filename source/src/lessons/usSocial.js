@@ -35,6 +35,7 @@ export const US_SOCIAL_LESSONS = [
         text: `A rainy coast with huge forests. Nations such as the **Tlingit** fished for **salmon**, built **cedar plank houses**, and carved **totem poles**.`,
       },
       { h: `Putting it together`, fig: `regions` },
+      { h: `On a real map`, fig: `map-regions` },
     ],
     watch: `There was no single “Indian” way of life. Hundreds of nations had their own languages, governments and traditions, and many of these nations still exist today.`,
     tryIt: [
@@ -84,6 +85,7 @@ export const US_SOCIAL_LESSONS = [
           `**France**: Jacques Cartier explored the St. Lawrence River in Canada. The French traded for furs.`,
           `**England**: built colonies on the Atlantic coast, starting with Jamestown (1607).`,
         ],
+        fig: `map-columbus`,
       },
       {
         h: `The Columbian Exchange`,
@@ -134,6 +136,7 @@ export const US_SOCIAL_LESSONS = [
     },
     learn: [
       { text: `The 13 English colonies were along the Atlantic coast. **Jamestown, Virginia** (1607) was the first one that lasted. Historians group the colonies into three regions.`, fig: `colonies` },
+      { h: `On a real map`, fig: `map-colonies` },
       {
         h: `New England Colonies`,
         text: `Massachusetts, New Hampshire, Connecticut, Rhode Island. Rocky soil and cold winters, so people turned to **fishing, shipbuilding and trade**. Many settlers, like the Pilgrims and Puritans, came for religious reasons.`,
@@ -171,6 +174,15 @@ export const US_SOCIAL_LESSONS = [
         answer: 2,
         hint: `Plantations were found in the Southern Colonies.`,
         why: `A plantation was a large farm that grew crops like tobacco or rice to sell.`,
+      },
+      {
+        type: `map-pick`,
+        map: `colonies`,
+        q: `Tap the colony where Jamestown, the first English colony that lasted, was founded.`,
+        answer: `51`,
+        answerName: `Virginia`,
+        hint: `Its full name is Jamestown, Virginia.`,
+        why: `Jamestown was founded in Virginia in 1607. Virginia was one of the Southern Colonies.`,
       },
     ],
   },
@@ -311,6 +323,7 @@ export const US_SOCIAL_LESSONS = [
           `**1783, Treaty of Paris**: Britain recognized the United States as independent.`,
         ].join('. '),
       },
+      { h: `Where it happened`, fig: `map-revwar` },
       {
         h: `American strengths`,
         text: `Fighting on home ground, a cause people believed in, Washington’s leadership, and help from France (soldiers, ships and money) and from Spain.`,
@@ -326,10 +339,12 @@ export const US_SOCIAL_LESSONS = [
         why: `The win at Saratoga showed the Americans could beat the British, so France joined the war on their side.`,
       },
       {
-        q: `Where did the British army surrender in 1781?`,
-        options: [`Boston`, `Valley Forge`, `Lexington`, `Yorktown`],
-        answer: 3,
-        hint: `Look at the key events list for 1781.`,
+        type: `map-pick`,
+        map: `revwar`,
+        q: `Tap the place where the British army surrendered in 1781.`,
+        answer: `yorktown`,
+        answerName: `Yorktown`,
+        hint: `It was in Virginia, near the coast.`,
         why: `American and French forces trapped the British at Yorktown, Virginia, where they surrendered in 1781.`,
       },
       {

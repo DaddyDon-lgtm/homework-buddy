@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Mascot from '../Mascot.jsx'
 import { useStore } from '../store.jsx'
 import { LessonFigure } from '../lessons/figures.jsx'
-import { SortTask, OrderTask, taskText } from '../lessons/tasks.jsx'
+import { SortTask, OrderTask, MapPickTask, taskText } from '../lessons/tasks.jsx'
 
 // Turns **bold**, *italic* and new lines into elements.
 function Rich({ text }) {
@@ -92,6 +92,7 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
   const answered = picked !== null
   const correct = answered && (q.type ? taskOk : picked === q.answer)
   const score = results.filter(Boolean).length
+  const total = lesson.tryIt.length
 
   function pick(i) {
     if (answered) return
@@ -269,6 +270,7 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
           </section>
           {q.type === 'sort' && <SortTask key={`${attempt}-${qi}`} q={q} onDone={taskDone} />}
           {q.type === 'order' && <OrderTask key={`${attempt}-${qi}`} q={q} onDone={taskDone} />}
+          {q.type === 'map-pick' && <MapPickTask key={`${attempt}-${qi}`} q={q} onDone={taskDone} />}
           {!q.type && (
           <div className="options options-one">
             {q.options.map((o, i) => {
@@ -308,12 +310,12 @@ export default function Lesson({ lesson, number, subjectId, onBack, onPractice }
 
       {step === 4 && (
         <section className="lesson-card center-card">
-          <Mascot mood={score >= 2 ? 'cheer' : 'happy'} size={140} className="bob" />
-          <h2 className="title-glow">{score === 3 ? 'Perfect! You got all 3!' : score === 2 ? 'Nice work!' : 'Good start!'}</h2>
+          <Mascot mood={score >= total - 1 ? 'cheer' : 'happy'} size={140} className="bob" />
+          <h2 className="title-glow">{score === total ? `Perfect! You got all ${total}!` : score === total - 1 ? 'Nice work!' : 'Good start!'}</h2>
           <p className="lesson-big">
-            You got <strong>{score} of 3</strong> right.
+            You got <strong>{score} of {total}</strong> right.
           </p>
-          {score < 2 ? (
+          {score < total - 1 ? (
             <>
               <p>
                 {mascotName ? `${mascotName} says: ` : ''}It might help to read the lesson one more time before you practice.

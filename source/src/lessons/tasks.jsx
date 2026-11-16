@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { MapColonies, MapRevWar, REV_PLACES } from './maps.jsx'
+import { EAST } from './mapdata.js'
 
 // Hands-on Try It questions. Tapping works better than dragging on a tablet:
 // tap a card to pick it up, then tap where it goes. Tap a placed card to take it back.
@@ -145,4 +147,42 @@ export function OrderTask({ q, onDone }) {
   )
 }
 
-export const taskText = (q) => (q.type ? `${q.q}. ${q.items.join('. ')}` : `${q.q}. ${q.options.join('. ')}`)
+export function MapPickTask({ q, onDone }) {
+  const [picked, setPicked] = useState(null)
+  const [checked, setChecked] = useState(false)
+  const pick = { picked, checked, answer: q.answer }
+  const nameOf = (id) =>
+    q.map === 'colonies' ? EAST.states.find((s) => s.id === id)?.name : REV_PLACES.find((p) => p[0] === id)?.[1]
+  function check() {
+    setChecked(true)
+    onDone(picked === q.answer, picked === q.answer ? 1 : 0)
+  }
+  return (
+    <div className="task">
+      {!checked && <p className="task-help">👆 Tap the map, then check. You can change your mind before checking.</p>}
+      {q.map === 'colonies' ? (
+        <MapColonies pick={pick} onPickState={setPicked} />
+      ) : (
+        <MapRevWar pick={pick} onPickPlace={setPicked} />
+      )}
+      {picked && !checked && (
+        <div className="row map-pick-row">
+          <span className="task-help">
+            You picked: <strong>{nameOf(picked)}</strong>
+          </span>
+          <button className="btn task-check" onClick={check}>
+            Check ✓
+          </button>
+        </div>
+      )}
+      {checked && picked !== q.answer && (
+        <p className="task-help">
+          You picked {nameOf(picked)}. The answer is <strong>{q.answerName}</strong> (in green).
+        </p>
+      )}
+    </div>
+  )
+}
+
+export const taskText = (q) =>
+  q.type === 'map-pick' ? q.q : q.type ? `${q.q}. ${q.items.join('. ')}` : `${q.q}. ${q.options.join('. ')}`

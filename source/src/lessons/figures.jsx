@@ -2,6 +2,8 @@
 // Use in a lesson: a learn block gets  fig: '<id>'  and the figure appears under its text.
 // All diagrams are schematic (not to scale), and captions say so where it matters.
 
+import { MapColonies, MapRevWar, MapRegions, MapColumbus } from './maps.jsx'
+
 const A1 = 'var(--a1)'
 const A2 = 'var(--a2)'
 const A3 = 'var(--a3)'
@@ -10,7 +12,7 @@ const SOFT = 'var(--text-soft)'
 const GOOD = 'var(--good)'
 const BAD = 'var(--bad)'
 
-function Fig({ h, label, caption, children }) {
+export function Fig({ h, label, caption, children }) {
   return (
     <figure className="lesson-fig">
       <svg viewBox={`0 0 600 ${h}`} role="img" aria-label={label || caption}>
@@ -21,7 +23,7 @@ function Fig({ h, label, caption, children }) {
   )
 }
 
-function T({ x, y, children, size = 16, anchor = 'start', bold, soft, color, italic, rotate }) {
+export function T({ x, y, children, size = 16, anchor = 'start', bold, soft, color, italic, rotate, halo }) {
   return (
     <text
       x={x}
@@ -34,6 +36,7 @@ function T({ x, y, children, size = 16, anchor = 'start', bold, soft, color, ita
         fontWeight: bold ? 700 : 500,
         fontStyle: italic ? 'italic' : 'normal',
         fontFamily: 'inherit',
+        ...(halo ? { stroke: 'var(--bg)', strokeWidth: 4, paintOrder: 'stroke', strokeLinejoin: 'round' } : {}),
       }}
     >
       {children}
@@ -111,6 +114,11 @@ function Timeline({ rows, legend, caption }) {
 }
 
 const FIGURES = {
+  'map-colonies': MapColonies,
+  'map-revwar': MapRevWar,
+  'map-regions': MapRegions,
+  'map-columbus': MapColumbus,
+
   regions: () => {
     const cells = [
       ['🌲', 'Northeast Woodlands', 'forests and lakes', 'longhouse', 'corn, beans, squash', A2],
